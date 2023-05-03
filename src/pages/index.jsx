@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import dayjs from "dayjs";
+import { useState } from "react";
 import Header from "../components/Header";
+import { useUser } from "@supabase/auth-helpers-react";
 
 import Datepicker from "../components/form/Datepicker";
 import GuestsSelector from "components/form/GuestsSelector";
 import Link from "next/link";
+import ChatBot from "components/chatBot/ChatBot";
 
 export default function Home() {
     const [filters, setFilters] = useState({
-        adults: 0,
-        children: 0,
+        guests: 0,
         checkin: null,
         checkout: null,
     });
@@ -17,9 +17,6 @@ export default function Home() {
     const handleFilter = (e) => {
         e.preventDefault();
     };
-    // useEffect(() => {
-    //     console.log(filters);
-    // }, [filters]);
 
     return (
         <div
@@ -105,8 +102,7 @@ export default function Home() {
                                     href={{
                                         pathname: "/search",
                                         query: {
-                                            adults: filters.adults,
-                                            children: filters.children,
+                                            guests: filters.guests,
                                             checkin:
                                                 filters.checkin === null
                                                     ? undefined
@@ -131,6 +127,7 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+            <ChatBot />
         </div>
     );
 }
