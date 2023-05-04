@@ -8,6 +8,7 @@
   body {
     @apply relative z-1 bg-whiten font-satoshi text-base font-normal text-body;
   }
+
 }
 
 @layer components {
@@ -30,6 +31,11 @@
   .inbox-height {
     @apply h-[calc(100vh_-_8.125rem)] lg:h-[calc(100vh_-_5.625rem)];
   }
+}
+
+
+body .font-satoshi *{
+	font-family: Satoshi, sans-serif;
 }
 
 /* third-party libraries CSS */

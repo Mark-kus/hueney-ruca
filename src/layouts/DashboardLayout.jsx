@@ -1,6 +1,6 @@
-import Preload from '../components/Dashboard/Preload'
-import Sidebar from '../components/Dashboard/Sidebar'
-import Header from '../components/Dashboard/Header'
+import Preload from '../components/dashboard/Preload'
+import Sidebar from '../components/dashboard/Sidebar'
+import Header from '../components/dashboard/Header'
 
 
 export default function Layout({children})
