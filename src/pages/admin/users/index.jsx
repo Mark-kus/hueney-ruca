@@ -10,6 +10,7 @@ const table_head = [
 	{ idx: 'acciones', title: 'Acciones' },
 ]
 
+
 export default function Dashboard()
 {
 
@@ -40,41 +41,44 @@ export default function Dashboard()
 							<TableHead data={table_head} />
 							
 							<tbody>
-								<tr>
-									<td 
-										className="border-b border-[#eee] py-5 px-4">
-										<h5 
-											className="font-medium text-black">Luke Skywalker</h5>
-										<p 
-											className="text-sm">l.skywalker@lucasfilms.com</p>
-									</td>
-									<td 
-										className="border-b border-[#eee] py-5 px-4 pl-9 xl:pl-11">
-										<p 
-											className="text-black">2</p>
-									</td>
-									<td 
-										className="border-b border-[#eee] py-5 px-4">
-										<p 
-											className="text-black">May 13, 2023</p>
-									</td>
-									<td 
-										className="border-b border-[#eee] py-5 px-4">
-										<div 
-											className="flex items-center space-x-3.5">
-											<a 
-												className="hover:text-primary" href="/admin/users/edit">
-												<i 
-													className="ri-edit-line text-xl leading-none"></i>
-											</a>
-											<button 
-												className="hover:text-primary">
-												<i 
-													className="ri-close-circle-line text-xl leading-none"></i>
-											</button>
-										</div>
-									</td>
-								</tr>
+								{[1,2,3,4,5,6,7,8,9,10].map(() => (
+									<tr>
+										<td 
+											className="border-b border-[#eee] py-5 px-4">
+											<h5 
+												className="font-medium text-black">Luke Skywalker</h5>
+											<p 
+												className="text-sm">l.skywalker@lucasfilms.com</p>
+										</td>
+										<td 
+											className="border-b border-[#eee] py-5 px-4 pl-9 xl:pl-11">
+											<p 
+												className="text-black">2</p>
+										</td>
+										<td 
+											className="border-b border-[#eee] py-5 px-4">
+											<p 
+												className="text-black">May 13, 2023</p>
+										</td>
+										<td 
+											className="border-b border-[#eee] py-5 px-4">
+											<div 
+												className="flex items-center space-x-3.5">
+												<a 
+													className="hover:text-primary" href="/admin/users/edit">
+													<i 
+														className="ri-edit-line text-xl leading-none"></i>
+												</a>
+												<button 
+													className="hover:text-primary">
+													<i 
+														className="ri-close-circle-line text-xl leading-none"></i>
+												</button>
+											</div>
+										</td>
+									</tr>
+								))}
+
 							</tbody>
 						</table>
 
