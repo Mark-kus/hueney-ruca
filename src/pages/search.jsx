@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import CardCabin from "components/seeAllCabins/CardCabin";
 import CardSkeleton from "components/seeAllCabins/CardSkeleton";
@@ -13,10 +13,6 @@ export default function Search() {
     checkIn: null,
     checkOut: null,
   });
-
-  // useEffect(() => {
-  //     console.log(filters);
-  // }, [filters]);
 
   useEffect(() => {
     const initRequest = async () => {
@@ -77,8 +73,8 @@ export default function Search() {
   return (
     <>
       <Layout>
-        <div className="flex pb-8">
-          <section className="p-14">
+        <div className="flex flex-col md:pb-8 xl:flex-row">
+          <section className="m-auto mt-6 md:p-14">
             <div className="bg-brand-olive rounded-2xl p-8 w-96">
               <h3 className="text-white text-xl font-bold pb-6 pt-4">
                 Seleccionar fechas
@@ -162,7 +158,7 @@ export default function Search() {
             </div>
           </section>
 
-          <div className="flex-grow pt-12 pr-12">
+          <div id="reservas" className="flex-grow m-auto pt-12 md:pr-12">
             <h1 className="text-brand-green text-xl font-semibold pb-2">
               Cabañas disponibles
             </h1>

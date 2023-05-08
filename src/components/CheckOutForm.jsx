@@ -2,8 +2,18 @@ import { useSession } from "@supabase/auth-helpers-react";
 import Datepicker from "./form/Datepicker";
 import GuestsSelector from "./form/GuestsSelector";
 import { useEffect, useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
 
-export default function CheckOutForm({ price, night, extra }) {
+loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY);
+
+export default function CheckOutForm({
+    name,
+    price,
+    night,
+    extra,
+    default_price,
+    roomId,
+}) {
     // Este estado solo lo copie y pegue, para que no me de error el GuestSelector
     const session = useSession();
     const [filters, setFilters] = useState({
@@ -11,37 +21,59 @@ export default function CheckOutForm({ price, night, extra }) {
         checkin: null,
         checkout: null,
     });
+    const [rooms, setRooms] = useState([]);
+    const [roomIsPending, setRoomIsPending] = useState(true);
     useEffect(() => {
-        console.log(filters);
-    }, [filters]);
+        const getRooms = async () => {
+            const response = await fetch("/api/cabanas");
+            const data = await response.json();
+            setRooms(data);
+            setRoomIsPending(false);
+        };
+        getRooms();
+    }, []);
 
     const clickHandler = async () => {
-        if (session === null) {
-            alert("No esta logueado");
-        } else {
-            const response = await fetch("/api/booking", {
-                method: "POST", // *GET, POST, PUT, DELETE, etc.
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    checkin: filters.checkin,
-                    checkout: filters.checkout,
-                    adults: filters.guests,
-                    user_id: session.user.id,
-                    room_id: "d2282ae3-9224-44f3-a3b2-1a96f9f650fb",
-                }),
-            });
-            const data = await response.json();
-            console.log(data);
-        }
+        const response = await fetch("/api/booking", {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                checkin: filters.checkin,
+                checkout: filters.checkout,
+                adults: filters.guests,
+                user_id: session.user.id,
+                room_id: roomId,
+            }),
+        });
+
+        const data = await response.json();
+
+        const checkoutSessionResponse = await fetch(`/api/checkout_sessions`, {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                price_id: default_price,
+                night: night,
+                subscription: true,
+            }),
+        });
+        const checkoutSessionData = await checkoutSessionResponse.json();
+        window.location.href = checkoutSessionData.url;
     };
 
     return (
-        <div className="w-1/3">
-            <select className="text-brand-green font-bold text-4xl">
-                <option>Cabaña I</option>
-            </select>
+        // <div className="w-1/3">
+        <div
+            className="w-1/3"
+            // action={`/api/checkout_sessions?price_id=${default_price}&night=${night}&subscription=true`}
+            // method="POST"
+        >
+            <h2 className="text-brand-green font-bold text-4xl">{name}</h2>
+
             <div className="pt-4">
                 <div className="border-2 rounded-3xl border-brand-light-green shadow-lg p-6">
                     <h2 className="text-brand-green font-bold text-3xl pt-2">
@@ -106,8 +138,10 @@ export default function CheckOutForm({ price, night, extra }) {
 
                     <div className="bg-brand-light-green border rounded-xl text-center w-full">
                         <button
-                            className="text-white text-xl font-medium p-2"
+                            className="text-white text-xl font-medium p-2 w-full"
                             onClick={clickHandler}
+                            type="submit"
+                            role="link"
                         >
                             Reservar
                         </button>
@@ -135,5 +169,6 @@ export default function CheckOutForm({ price, night, extra }) {
                 </div>
             </div>
         </div>
+        // </div>
     );
 }
