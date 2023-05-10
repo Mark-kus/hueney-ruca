@@ -3,7 +3,8 @@ import { supabase } from "../../../utils/supabase";
 export const getAllComments = async () => {
   const { data: comments, error } = await supabase
     .from("comments")
-    .select(`*, profiles(full_name, email)`);
+    .select(`*, profiles(full_name, email)`)
+		.order('created_at', { ascending: false });
 
   if (error) {
     console.log(error);
@@ -62,7 +63,7 @@ export const updateComment = async ({
   return updateComments;
 };
 
-export async function deleteComment({ id }) {
+export async function deleteComment(id) {
   const { data, error } = await supabase.from("comments").update({ deleted_at: new Date() }).eq("id", id);
 
   if (error) {
