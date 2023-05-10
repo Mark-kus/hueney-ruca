@@ -3,14 +3,14 @@ import Link from "next/link";
 export default function CardCabin({ cabin }) {
     return (
         <Link href={`/cabanas/${cabin.id}`}>
-        <div className="border rounded-2xl overflow-hidden shadow-lg flex flex-col md:flex-row m-1">
+        <div className="border-2 border-slate-100 rounded-2xl overflow-hidden shadow-lg flex flex-col md:flex-row m-1">
             <div className="relative w-80 h-56 flex-shrink-0 p-4">
                 <img
                     src="https://via.placeholder.com/500x500.png?text=Image+Not+Found"
                     alt="Cabin image"
                     layout="fill"
                     objectfit="cover"
-                    className="border rounded-2xl object-cover w-full h-full"
+                    className="rounded-2xl object-cover w-full h-full"
                 />
             </div>
             <div className="pl-8 pr-4 pt-6">

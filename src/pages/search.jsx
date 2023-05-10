@@ -141,7 +141,7 @@ export default function Search() {
                     name="guests"
                     min="1"
                     max="10"
-                    className="text-neutral-400 border-2 p-2 w-full rounded-md"
+                    className="text-gray-400 text-sm p-4 w-full rounded-xl"
                     value={filters.capacity}
                     onChange={changeHandler}
                   />

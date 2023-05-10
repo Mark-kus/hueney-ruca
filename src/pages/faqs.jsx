@@ -35,7 +35,7 @@ export default function Faqs(){
 
 	return (
 		<Layout>
-			<div className="container mx-auto px-6 xl:px-0">
+			<div className="container mx-auto px-6 mb-10 xl:px-0">
 				<h2 
 					className="text-brand-green text-3xl font-bold 
 											leading-none pt-14 pb-8 
