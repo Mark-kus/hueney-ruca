@@ -57,7 +57,7 @@ export default function Dashboard() {
         parseInt(mesActual) === parseInt(mes) &&
         parseInt(anioActual) === parseInt(anio)
       ) {
-        totalGuests += bookings[i].adults;
+        totalGuests += bookings[i].adults + bookings[i].children;
       }
     }
     return totalGuests;
@@ -81,16 +81,71 @@ export default function Dashboard() {
         parseInt(mesPasado) === parseInt(mes) &&
         parseInt(anioActual) === parseInt(anio)
       ) {
-        totalGuests += bookings[i].adults;
+        totalGuests += bookings[i].adults + bookings[i].children;
       }
     }
     return totalGuests;
   };
 
   //Esta funcion mide el cambio porcentual de usuarios respecto al mes anterior
-  //Es necesario agregar columa created_at en tabla profiles para su desarrollo
 
-  const usersPorcentualChange = () => {};
+  const usersPorcentualChange = () => {
+    const users = thisMonthUsers();
+    const pastMonthUsers = lastMonthUsers();
+    if (users && pastMonthUsers) {
+      const porcentualChange =
+        ((users - pastMonthUsers) / pastMonthUsers) * 100;
+      return porcentualChange.toFixed(2);
+    } else {
+      return "No es obtenible";
+    }
+  };
+
+  //Esta funcion cuenta los usuarios del mes pasado
+
+  const lastMonthUsers = () => {
+    let countUsers = 0;
+    const actualDate = new Date();
+    const lastMonth = actualDate.getMonth();
+    const actualYear = actualDate.getFullYear();
+    for (let i = 0; i < users.length; i++) {
+      const stringDate = users[i].created_at;
+      const creationDate = new Date(stringDate);
+      const creationMonth = creationDate.getMonth() + 1;
+      const creationYear = creationDate.getFullYear();
+      if (
+        parseInt(creationMonth) === parseInt(lastMonth) &&
+        parseInt(creationYear) === parseInt(actualYear)
+      ) {
+        countUsers += 1;
+      }
+    }
+
+    return countUsers;
+  };
+
+  //Esta funcion cuenta los usuarios de este mes
+
+  const thisMonthUsers = () => {
+    let countUsers = 0;
+    const actualDate = new Date();
+    const actualMonth = actualDate.getMonth() + 1;
+    const actualYear = actualDate.getFullYear();
+    for (let i = 0; i < users.length; i++) {
+      const stringDate = users[i].created_at;
+      const creationDate = new Date(stringDate);
+      const creationMonth = creationDate.getMonth() + 1;
+      const creationYear = creationDate.getFullYear();
+      if (
+        parseInt(creationMonth) === parseInt(actualMonth) &&
+        parseInt(creationYear) === parseInt(actualYear)
+      ) {
+        countUsers += 1;
+      }
+    }
+
+    return countUsers;
+  };
 
   //Esta funcion cuenta el total de reservas activas
   const activeBookings = () => {
@@ -126,14 +181,14 @@ export default function Dashboard() {
       <main>
         <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
-            <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-              <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-                <i className="ri-calendar-check-line text-white text-xl leading-none"></i>
+            <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default">
+              <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2">
+                <i className="ri-calendar-check-line text-primary text-xl leading-none"></i>
               </div>
 
               <div className="mt-4 flex items-end justify-between">
                 <div>
-                  <h4 className="text-title-md font-bold text-black dark:text-white">
+                  <h4 className="text-title-md font-bold text-black">
                     {activeBookings()}
                   </h4>
                   <span className="text-sm font-medium">Reservas activas</span>
@@ -141,17 +196,19 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-              <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-                <i className="ri-group-line text-white text-xl leading-none"></i>
+            <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default">
+              <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2">
+                <i className="ri-group-line text-primary text-xl leading-none"></i>
               </div>
 
               <div className="mt-4 flex items-end justify-between">
                 <div>
-                  <h4 className="text-title-md font-bold text-black dark:text-white">
+                  <h4 className="text-title-md font-bold text-black">
                     {countGuests()}
                   </h4>
-                  <span className="text-sm font-medium">Huéspedes este mes</span>
+                  <span className="text-sm font-medium">
+                    Huéspedes este mes
+                  </span>
                 </div>
 
                 <span className="flex items-center gap-1 text-sm font-medium text-meta-3">
@@ -173,10 +230,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-              <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+            <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default">
+              <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2">
                 <svg
-                  className="fill-primary dark:fill-white"
+                  className="fill-primary"
                   width="22"
                   height="18"
                   viewBox="0 0 22 18"
@@ -200,14 +257,14 @@ export default function Dashboard() {
 
               <div className="mt-4 flex items-end justify-between">
                 <div>
-                  <h4 className="text-title-md font-bold text-black dark:text-white">
+                  <h4 className="text-title-md font-bold text-black">
                     {countUsers()}
                   </h4>
                   <span className="text-sm font-medium">Total Users</span>
                 </div>
 
                 <span className="flex items-center gap-1 text-sm font-medium text-meta-5">
-                  0.95%
+                  {usersPorcentualChange()}
                   <svg
                     className="fill-meta-5"
                     width="10"
@@ -227,7 +284,10 @@ export default function Dashboard() {
           </div>
 
           <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-            <include src="./partials/chart-01.html" />
+            {/* <include src="./partials/chart-01.html" /> 
+            No se usa include con react que yo sepa, o se trata de no, si es necesario
+            pasenlo como componente <Component /> sino vuela
+            */}
           </div>
         </div>
       </main>

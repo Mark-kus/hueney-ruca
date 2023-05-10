@@ -1,7 +1,12 @@
+import { getProfileId } from "helpers/dbHelpers";
 import { supabase } from "../../../utils/supabase";
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 export const getAllBooking = async () => {
-  const { data: infoBooking, error } = await supabase.from("booking").select();
+  const { data: infoBooking, error } = await supabase
+    .from("booking")
+    .select('*, rooms(name, id)')
+    .order("created_at", { ascending: false });
 
   if (error) {
     throw error;
@@ -33,13 +38,18 @@ export const postNewBooking = async ({
   adults,
   children,
 }) => {
+  const { userId, error: profileError } = await getProfileId(user_id);
+  if (profileError) {
+    throw profileError;
+  }
+
   const { data: postBooking, error } = await supabase
     .from("booking")
     .insert([
       {
         checkin,
         checkout,
-        user_id,
+        user_id: userId,
         room_id,
         payments,
         adults,
@@ -48,47 +58,77 @@ export const postNewBooking = async ({
     ])
     .select();
   if (error) {
+    console.log(error);
     throw error;
   }
   return postBooking;
 };
 
-export const updateBooking = async ({
+export const updateBooking = async (
+  { checkin, checkout, user_id, room_id, payments, adults, children },
   id,
-  checkin,
-  checkout,
-  user_id,
-  room_id,
-  payments,
-  adults,
-  children,
-}) => {
-  const update_at = new Date();
-  const { data: upBooking, error } = await supabase
-    .from("booking")
-    .update({
-      checkin,
-      checkout,
-      user_id,
-      room_id,
-      payments,
-      adults,
-      children,
-      update_at,
-    })
-    .eq("id", id)
-    .select();
-  if (error) {
-    throw error;
+  suspend
+) => {
+  if (suspend === undefined) {
+    const newDate = new Date();
+    const { data: upBooking, error } = await supabase
+      .from("booking")
+      .update({
+        checkin,
+        checkout,
+        user_id,
+        room_id,
+        payments,
+        adults,
+        children,
+        update_at: newDate,
+      })
+      .eq("id", id)
+      .select();
+    if (error) {
+      throw error;
+    }
+    return upBooking;
+  } else {
+    const booking = await getBookingById(id);
+    const { data: upBooking, error } = await supabase
+      .from("booking")
+      .update({ suspended: !booking.suspended })
+      .eq("id", id)
+      .select();
+    if (error) {
+      throw error;
+    }
+    return upBooking;
   }
-  return upBooking;
 };
 
-export async function deleteBooking({ id }) {
-  const { data, error } = await supabase.from("booking").delete().eq("id", id);
+export async function deleteBooking(id) {
+  const { data, error } = await supabase
+    .from("booking")
+    .update({ deleted_at: new Date() })
+    .eq("id", id);
 
   if (error) {
     throw error;
   }
   return data;
+}
+
+export async function paymentVerification(bookingId, sessionId) {
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  console.log(session.line_items);
+  if (session.status === "complete" && session.payment_status === "paid") {
+    //Se pago correctamente
+    const { data, error } = await supabase
+      .from("booking")
+      .update({ payments: true })
+      .eq("id", bookingId);
+    if (error) {
+      throw error;
+    }
+    return data;
+  } else {
+    throw new Error("Problema con el pago");
+  }
 }

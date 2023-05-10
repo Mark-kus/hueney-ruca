@@ -9,12 +9,14 @@ import Header from '../../../components/dashboard/PageHeader'
 import TableHead from '../../../components/dashboard/tables/TableHead'
 
 const table_head = [
-  { idx: 'date', title: 'Fechat', width: 'min-w-[220px]' },
+  { idx: 'date', title: 'Fecha', width: 'min-w-[220px]' },
   { idx: 'cabin', title: 'Cabaña', width: 'min-w-[150px]' },
   { idx: 'check-in', title: 'Check-in', width: 'min-w-120px' },
   { idx: 'check-out', title: 'Check-out', width: 'min-w-[120px]' },
   { idx: 'actions', title: 'Acciones' },
 ];
+
+const guests = (adults, children) => `${ adults ? adults+' adultos' : '' }${ children ? ' / '+children+' niños' : ''}`
 
 export default function Dashboard() {
   const [bookings, setBookings] = useState([]);
@@ -51,8 +53,14 @@ export default function Dashboard() {
       'reserva',
       e.target.value,
       setBookings,
-      bookings
+      bookings,
+			'booking'
     )
+  }
+
+  const handleDownload = (e) => {
+    e.preventDefault();
+    // Descarga de comprobante
   }
 
   return (
@@ -87,36 +95,36 @@ export default function Dashboard() {
                       <td className={
 												`border-[#eee] py-5 px-4 ${i < bookings.length -1 ? 'border-b' : ''}`
 												}>
-                        <p className="text-black">{ dayjs(booking.created_at).format('DD MMM, YYYY') }</p>
+                        <p className="text-sm font-medium">{ dayjs(booking.created_at).format('DD MMM, YYYY') }</p>
                       </td>
                       <td className={
 												`border-[#eee] py-5 px-4 ${i < bookings.length -1 ? 'border-b' : ''}`
 											}>
-                        <h5 className="font-medium text-black">
+                        <h5 className="text-slate-700 font-bold">
                           {loading ? "" : handleRoom(booking.room_id)}
                         </h5>
-                        <p className="text-sm">Lorem ipsum dolor sit.</p>
+                        <p className="text-slate-500 text-xs font-medium">{ guests(booking.adults, booking.children) }</p>
                       </td>
                       <td className={
 												`border-[#eee] py-5 px-4 ${i < bookings.length -1 ? 'border-b' : ''}`
 											}>
-                        <p className="text-black">{ dayjs(booking.checkin).format('DD MMM, YYYY') }</p>
+                        <p className="text-sm font-medium">{ dayjs(booking.checkin).format('DD MMM, YYYY') }</p>
                       </td>
                       <td className={
 												`border-[#eee] py-5 px-4 ${i < bookings.length -1 ? 'border-b' : ''}`
 											}>
-                        <p className="text-black">{ dayjs(booking.checkout).format('DD MMM, YYYY') }</p>
+                        <p className="text-sm font-medium">{ dayjs(booking.checkout).format('DD MMM, YYYY') }</p>
                       </td>
                       <td className={
 												`border-[#eee] py-5 px-4 ${i < bookings.length -1 ? 'border-b' : ''}`
 											}>
                         <div className="flex items-center space-x-3.5">
-                          <Link
-                            className="hover:text-primary"
-                            href="detail-reserva.html"
+                          <a
+                            onClick={handleDownload}
+                            className="hover:text-primary ri-file-text-line text-xl leading-none"
+                            href="/"
                           >
-                            <i className="ri-file-text-line text-xl leading-none"></i>
-                          </Link>
+                          </a>
                           <Link
                             className="hover:text-primary"
                             href={`/admin/booking/${booking.id}`}
@@ -137,6 +145,9 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+			<div className="h-20"></div>
+
     </Layout>
   );
 }

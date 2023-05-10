@@ -1,3 +1,4 @@
+import axios from "axios";
 import Swal from "sweetalert2";
 
 /**
@@ -8,11 +9,12 @@ import Swal from "sweetalert2";
  * @param {Number}   id           El id de la instancia a borrar/suspender.
  * @param {Function}   setter           setState a ejecutar.
  * @param {Object}   data           Estado a filtrar con setState.
- * @param {String}   route           Si no se pasa, se toma la instancia como ruta (POST/PUT /api/${route || instancia}).
+ * @param {String}   route           Ruta de la api (DELETE/PUT /api/${route}/${id}).
  */
 
 export default function swalAction(instancia, id, setter, data, route) {
     // Para saber si la instancia es el o la
+    let response = false;
     const articulo =
         instancia.slice(-1) === 'a'
             ? 'la'
@@ -32,20 +34,31 @@ export default function swalAction(instancia, id, setter, data, route) {
         cancelButtonText: 'Ninguna',
         reverseButtons: true,
         preConfirm: async () => {
-            // suspende instancia
+            // Suspensión de instancia
+            try {
+                // Envía un query 'true' para dar el toggle, no es explicitamente el valor de suspended
+                response = await axios.put(`/api/${route}/${id}?suspend=true`);
+            } catch (error) {
+                Swal.fire('Nope', 'Ocurrió un error, intenta más tarde', 'error')
+            }
         },
         preDeny: async () => {
-            // elimina instancia
+            // Borrado logico de instancia
+            try {
+                response = await axios.delete(`/api/${route}/${id}`)
+            } catch (error) {
+                Swal.fire('Nope', 'Ocurrió un error, intenta más tarde', 'error')
+            }
         }
     })
-    // Si no fue cancelado, actua (pre👆) y responde con otro swal
+        // Si no fue cancelado, actua (pre👆) y responde con otro swal
         .then((result) => {
-            if (!result.isDismissed) {
-                Swal.fire({
-                    title: 'Listo!',
-                    text: `Se ${result.isConfirmed ? 'suspendió' : 'borró'} ${articulo} ${instancia}.`,
-                    icon: 'success',
-                })
+            if (!result.isDismissed && response) {
+                Swal.fire(
+                    'Listo!',
+                    `Se ${result.isConfirmed ? 'suspendió' : 'borró'} ${articulo} ${instancia}.`,
+                    'success',
+                )
                 // Borra esa instancia de la lista en index
                 setter(data.filter((elem) => elem.id !== id))
             }

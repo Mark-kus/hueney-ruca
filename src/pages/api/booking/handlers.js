@@ -31,8 +31,9 @@ export async function handlerPost(req, res) {
 
 export async function handlerPut(req, res) {
   const body = req.body;
+  const { id, suspend } = req.query;
   try {
-    const updateBooking = await Controllers.updateBooking(body);
+    const updateBooking = await Controllers.updateBooking(body, id, suspend);
     return res.status(200).json(updateBooking);
   } catch (error) {
     return res.status(404).json({ error: error.message });
@@ -40,11 +41,26 @@ export async function handlerPut(req, res) {
 }
 
 export async function handlerDelete(req, res) {
-  const body = req.body;
+  const { id } = req.query;
 
   try {
-    const response = await Controllers.deleteBooking(body);
+    const response = await Controllers.deleteBooking(id);
     return res.status(200).json({ message: "Booking successfully removed" });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+export async function handlerUpdateById(req, res) {
+  const { id, session_id } = req.query;
+  try {
+    if (session_id === undefined) {
+      handlerPut(req, res);
+    } else {
+      //Si se paso un session_id entonces es verificaicon de pago
+      const response = await Controllers.paymentVerification(id, session_id);
+      res.json(response);
+    }
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
