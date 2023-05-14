@@ -63,8 +63,8 @@ export default function RoomForm({ room }) {
     setStatus(true);
 
     if (room?.id) {
-      console.log(form);
-      console.log(room.id);
+      //console.log(form);
+      //console.log(room.id);
       axios
         .put(`/api/cabanas/${room.id}`, form)
         .then((resp) => {
