@@ -4,6 +4,7 @@ import Services from "../../../helpers/services";
 import BtnSubmit from "./BtnSubmit";
 import Preload from "../PreloadSmall";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function RoomForm({ room }) {
     //console.log(room);
@@ -18,7 +19,15 @@ export default function RoomForm({ room }) {
         bathrooms: room?.bathrooms || 1,
         price: room?.price || 1000,
         services: room?.services || [],
-        description: room?.description || "", //'Bienvenido a este hermoso refugio en medio de la naturaleza. Un lugar magnífico para disfrutar de unas relajantes vacaciones en familia o para una escapada de fin de semana con amigos. Aquí podrás desconectar del mundo y sumergirte en un ambiente de confort y tranquilidad. Con amplias habitaciones, acogedoras áreas comunes y una hermosa vista al bosque, esta cabaña es el lugar perfecto para disfrutar de momentos inolvidables con tus seres queridos. ¡Te esperamos!',
+        description: room?.description || "",
+        /*
+        Bienvenido a este hermoso refugio en medio de la naturaleza.
+        Un lugar magnífico para disfrutar de unas relajantes vacaciones
+        en familia o para una escapada de fin de semana con amigos.
+        Aquí podrás desconectar del mundo y sumergirte en un ambiente de confort y tranquilidad.
+        Con amplias habitaciones, acogedoras áreas comunes y una hermosa vista al bosque,
+        esta cabaña es el lugar perfecto para disfrutar de momentos inolvidables con tus seres queridos. ¡Te esperamos!',
+        */
     });
 
     const router = useRouter();
@@ -62,6 +71,7 @@ export default function RoomForm({ room }) {
     const submitHandler = (e) => {
         e.preventDefault();
         setStatus(true);
+
         // JHONNY, EJECUTA LO QUE HAY EN ESTE IF AL HABER ERRORES ACTIVOS, GRACIAS
         // if (Object.values(errors).some((error) => error !== null)) {
         //     // Si hay un error, se evita hacer el submit y tira un alert vintage
@@ -74,19 +84,27 @@ export default function RoomForm({ room }) {
                 .put("/api/cabanas", { form, idRoom: room.id })
                 .then((resp) => {
                     // console.log(resp.data)
-                    alert("UHU! Hemos actualizado los datos de la cabaña");
+                    Swal.fire('Yuju!', 'Actualizamos exitosamente tu cabaña', 'success')
                     router.push("/admin/rooms");
                 })
-                .catch((err) => console.log("Error", err));
+                .catch((err) => {
+                    console.log("Error", err)
+                    Swal.fire('Ohoh :(', 'Hubo un error al actualizar tu cabaña, intenta más tarde', 'error')
+                    setStatus(false);
+                });
         } else {
             axios
                 .post("/api/cabanas", form)
                 .then((resp) => {
                     // console.log(resp.data)
-                    alert("WOHA! la nueva cabaña que creaste ya está lista");
+                    Swal.fire('Whoa!', 'Tu nueva cabaña ya está lista', 'success');
                     router.push("/admin/rooms");
                 })
-                .catch((err) => console.log("Error", err));
+                .catch((err) => {
+                    console.log("Error", err)
+                    Swal.fire('Ohoh :(', 'Hubo un error al crear tu cabaña, intenta más tarde', 'error')
+                    setStatus(false);
+                });
         }
     };
 
