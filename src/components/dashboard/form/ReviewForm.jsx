@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import BtnSubmit from "./BtnSubmit";
 import Preload from "../PreloadSmall";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function ReviewForm({ review }) {
   const router = useRouter();
@@ -89,19 +90,27 @@ export default function ReviewForm({ review }) {
         .put(`/api/comments/${review.id}`, form)
         .then((res) => {
           // acá va el envío de mail, cuando se fixee el update de reviews lo hago. atte: Marquitos
-          alert("UHU! Hemos actualizado el review");
+          Swal.fire('Yuju!', 'Actualizamos exitosamente este comentario', 'success')
           router.push("/admin/reviews");
         })
-        .catch((err) => console.log("Error", err));
+        .catch((err) => {
+          console.log("Error", err)
+          Swal.fire('Ohoh :(', 'Hubo un error al actualizar el comentario, intenta más tarde', 'error')
+          setStatus(false);
+        });
     } else {
       // crear
       axios
         .post(`/api/comments/`, form)
         .then((res) => {
-          alert("UHU! Hemos creado un nuevo review");
+          Swal.fire('Whoa!', 'Este comentario ya está listo', 'success');
           router.push("/admin/reviews");
         })
-        .catch((err) => console.log("Error", err));
+        .catch((err) => {
+          console.log("Error", err)
+          Swal.fire('Ohoh :(', 'Hubo un error al crear el comentario, intenta más tarde', 'error')
+          setStatus(false);
+        });
     }
   };
 
