@@ -58,7 +58,7 @@ useEffect(() => {
                         <h3 className="text-lg font-bold text-primary">Huespedes:</h3>
                         <ul className='flex'>
                           <li>Adultos: {booking.adults}</li>
-											    <li>-</li>
+											    <li className='px-1'>-</li>
                           <li>Ninos: {booking.children ? booking.children : '0'}</li>
                         </ul>
                       </div>

@@ -4,6 +4,7 @@ import Services from "../../../helpers/services";
 import BtnSubmit from "./BtnSubmit";
 import Preload from "../PreloadSmall";
 import axios from "axios";
+import Swal from "sweetalert2";
 import CabinBuckets from "components/CabinBuckets";
 import CabinGallery from "components/CabinGallery";
 
@@ -11,7 +12,7 @@ export default function RoomForm({ room }) {
   const types = ["A", "B", "C"];
 
   const [form, setForm] = useState({
-    name: room?.name || "", // `Cabaña #${ Date.now() }`,
+    name: room?.name || "",
     type: room?.type || "A",
     rooms: room?.rooms || 1,
     capacity: room?.capacity || 1,
@@ -62,28 +63,42 @@ export default function RoomForm({ room }) {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    
+        // JHONNY, EJECUTA LO QUE HAY EN ESTE IF AL HABER ERRORES ACTIVOS, GRACIAS
+        // if (Object.values(errors).some((error) => error !== null)) {
+        //     Swal.fire('Debes correjir los errores', '', 'warning');
+        //     return;
+        // }
+    
     setStatus(true);
-
-    if (room?.id) {
-      axios
-        .put("/api/cabanas", { form, id: room.id })
-        .then((resp) => {
-          // console.log(resp.data)
-          alert("UHU! Hemos actualizado los datos de la cabaña");
-          router.push("/admin/rooms");
-        })
-        .catch((err) => console.log("Error", err));
-    } else {
-      axios
-        .post("/api/cabanas", form)
-        .then((resp) => {
-          // console.log(resp.data)
-          alert("WOHA! la nueva cabaña que creaste ya está lista");
-          router.push("/admin/rooms");
-        })
-        .catch((err) => console.log("Error", err));
-    }
-  };
+     if (room?.id) {
+            axios
+                .put("/api/cabanas", { form, idRoom: room.id })
+                .then((resp) => {
+                    // console.log(resp.data)
+                    Swal.fire('Yuju!', 'Actualizamos exitosamente tu cabaña', 'success')
+                    router.push("/admin/rooms");
+                })
+                .catch((err) => {
+                    console.log("Error", err)
+                    Swal.fire('Ohoh :(', 'Hubo un error al actualizar tu cabaña, intenta más tarde', 'error')
+                    setStatus(false);
+                });
+        } else {
+            axios
+                .post("/api/cabanas", form)
+                .then((resp) => {
+                    // console.log(resp.data)
+                    Swal.fire('Whoa!', 'Tu nueva cabaña ya está lista', 'success');
+                    router.push("/admin/rooms");
+                })
+                .catch((err) => {
+                    console.log("Error", err)
+                    Swal.fire('Ohoh :(', 'Hubo un error al crear tu cabaña, intenta más tarde', 'error')
+                    setStatus(false);
+                });
+        }
+    };
 
   const [mostrarGallery, setMostrarGallery] = useState(false);
   const buttonTextGallery = mostrarGallery
@@ -450,4 +465,3 @@ export default function RoomForm({ room }) {
       </div>
     </div>
   );
-}
