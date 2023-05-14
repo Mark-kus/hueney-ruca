@@ -42,6 +42,7 @@ export default function Cabins({ plans }) {
   }, []);
 
   const settings = {
+    dots: true,
     slidesToShow: 3,
     infinite: true,
     arrows: false,
@@ -56,7 +57,7 @@ export default function Cabins({ plans }) {
         },
       },
       {
-        breakpoint: 600,
+        breakpoint: 640,
         settings: {
           slidesToShow: 1,
         },
@@ -66,35 +67,42 @@ export default function Cabins({ plans }) {
 
   return (
     <Layout>
-      <div className="container mx-auto px-6 xl:px-0">
+      <div className="container h-full  mx-auto px-6 2xl:px-0">
         <h2
-          className="text-brand-green text-3xl font-bold 
-											leading-none text-center pt-14 pb-8 
-											md:text-4xl md:leading-none"
-        >
+          className="text-brand-green text-3xl font-bold leading-none 
+					text-center pt-14 pb-8 md:text-4xl md:leading-none">
           Nuestras cabañas
         </h2>
 
         <div
-          className="text-brand-green text-center 
-												leading-tight max-w-4xl mx-auto"
-        >
+          className="text-brand-green text-center leading-tight max-w-4xl mx-auto">
           El Complejo está compuesto por 11 cabañas de diferentes capacidades y
           dos piletas al aire libre, elegí la que mejor se adapte a vos y vení a
           disfrutar!
         </div>
 
-        <div className="m-12">
+        <div className="m-10">
           <Slider {...settings}>
             {cabins.map((cabin) => (
-              <div key={cabin.id} className="border text-center rounded-2xl">
-                <div className="bg-slate-500 w-full h-60 rounded-2xl mb-8"></div>
+              <div key={cabin.id} className="group">
+                <div className="mx-8 text-center rounded-2xl mb-8 overflow-hidden">
+                {cabin.images
+                ? (
+									<div 
+										className="h-56 overflow-hidden rounded-2xl shadow-lg">
+										<img 
+											src={cabin.images.url[0].fileUrl} 
+											alt={cabin.name} 
+											className="w-full h-full object-cover"/>
+								</div>
+								)
+              : <div className="bg-slate-300 rounded-t-xl">No hay imagenes</div>}
 
-                <h2 className="text-brand-green font-bold text-3xl">
+                <h2 className="text-brand-green font-bold text-3xl mt-5">
                   {cabin.name}
                 </h2>
 
-                <div className="flex justify-center m-2">
+                <div className="text-sm flex justify-center items-center mt-2">
                   <img src={people.src} alt="Capacidad" className="mx-2" />
                   <p>{cabin.capacity}</p>
                   <p className="mx-2">|</p>
@@ -106,20 +114,22 @@ export default function Cabins({ plans }) {
                   </p>
                 </div>
 
-                <div>
+                <div className="text-xs leading-tight font-medium mt-2">
                   {cabin.price ? (
                     <>
-                      <p>Precio: {cabin.price} ARS / día</p>
+                      <div>Precio: {cabin.price} ARS / día</div>
                     </>
                   ) : (
-                    <p>Precio no disponible</p>
+                    <div className="opacity-40">Precio no disponible</div>
                   )}
                 </div>
 
                 <Link href={`/cabanas/${cabin.id}`} className="btn-yellow mt-6 mb-8">Ver más</Link>
               </div>
+              </div>
             ))}
-          </Slider>
+          </Slider >
+          
         </div>
       </div>
     </Layout>

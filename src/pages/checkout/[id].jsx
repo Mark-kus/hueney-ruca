@@ -5,17 +5,24 @@ import Login from "pages/login";
 import { supabase } from "utils/supabase";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import SummaryCheckOut from "components/SummaryCheckOut";
+import { addDays, diffDays } from "helpers/dateProcessing";
 
-export default function CheckOut({ room }) {
+export default function CheckOut({ room, url }) {
     const session = useSession();
-    const [products, setProducts] = useState([]);
-    const [matchingProduct, setMatchingProduct] = useState(null);
 
+    const [matchingProduct, setMatchingProduct] = useState(null);
+    //QUEDA DEFINIR SI USAREMOS COSAS COMO EXTRAS O DESCUENTOS
     const mock = {
-        price: 19,
-        night: 7,
         extra: 20,
     };
+
+    const [filters, setFilters] = useState({
+        checkin: null,
+        checkout: null,
+        adults: 2,
+        children: 0,
+    });
 
     useEffect(() => {
         async function fetchProducts() {
@@ -23,9 +30,7 @@ export default function CheckOut({ room }) {
             const matching = response.data.find(
                 (product) => product.name === room.name
             );
-            setProducts(response.data);
             setMatchingProduct(matching);
-            // Products no se está usando, si no se va a usar eliminarlo
         }
         fetchProducts();
     }, []);
@@ -34,36 +39,53 @@ export default function CheckOut({ room }) {
         <>
             {session ? (
                 <LayoutMain>
-                    <div className="flex flex-col md:flex-row p-6 pb-12 items-start">
+                    <div className="flex pt-6 pl-2">
                         <button
                             className="flex items-center text-brand-green font-bold pr-4 pl-6"
                             onClick={() => window.history.back()}
                         >
-                            <img
-                                src="/arrowBack.svg"
-                                alt=""
-                                className="w-4/5 pt-3.5"
-                            />
+                            <img src="/back.svg" alt="" className="w-7" />
                         </button>
+                        <h1 className="font-bold text-brand-green text-4xl">
+                            Confirma tu reserva
+                        </h1>
+                    </div>
+                    <div className="flex flex-col pt-4 pb-18 pl-4 pr-4 md:pl-20 md:pr-20 items-center md:flex-row md:justify-between">
                         {matchingProduct &&
                             matchingProduct.name === room.name && (
                                 <CheckOutForm
-                                    roomId={room.id}
+                                    filters={filters}
+                                    setFilters={setFilters}
+                                    room={room}
                                     name={matchingProduct.name}
                                     price={matchingProduct.price}
                                     default_price={
                                         matchingProduct.default_price
                                     }
-                                    night={mock.night}
+                                    night={diffDays(
+                                        new Date(filters.checkin),
+                                        new Date(filters.checkout)
+                                    )}
                                     extra={mock.extra}
                                 />
                             )}
 
-                        <img
-                            src="/ilustrationCheck.svg"
-                            alt=""
-                            className="w-4/12 mr-16 ml-auto self-center"
+                        <SummaryCheckOut
+                            url={url}
+                            name={room.name}
+                            price={room.price}
+                            night={diffDays(
+                                new Date(filters.checkin),
+                                new Date(filters.checkout)
+                            )}
+                            extra={mock.extra}
                         />
+
+                        {/* <img
+          src="/ilustrationCheck.svg"
+          alt=""
+          className="w-4/12 mr-16 ml-auto self-center"
+      /> */}
                     </div>
                 </LayoutMain>
             ) : (
@@ -78,7 +100,7 @@ export async function getServerSideProps({ params }) {
 
     const { data: room, error } = await supabase
         .from("rooms")
-        .select("*")
+        .select(`*,booking(checkin,checkout,payments)`)
         .eq("id", id);
 
     if (error) {
@@ -87,9 +109,15 @@ export async function getServerSideProps({ params }) {
         };
     }
 
+    const { data: image, err } = await supabase
+        .from("images")
+        .select(`*`)
+        .eq("id", room[0].images_id);
+
     return {
         props: {
             room: room[0],
+            url: image && !err ? image[0].url[0].fileUrl : null,
         },
     };
 }
