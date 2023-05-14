@@ -9,6 +9,7 @@ controller.asignAdminRole = async (userId) => {
         })
         .eq("id", userId)
         .select(`*`);
+    return updateUser;
 };
 
 controller.removeAdminRole = async (userId) => {
@@ -19,6 +20,7 @@ controller.removeAdminRole = async (userId) => {
         })
         .eq("id", userId)
         .select(`*`);
+    return updateUser;
 };
 
 export default controller;
