@@ -1,19 +1,25 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "@supabase/auth-helpers-react";
+import { getProfileInfoId } from "helpers/dbHelpers";
 
 
 export default function Header(props) {
     const session = useSession();
     const [navActive, setNavActive] = useState(false);
     const [navbarClassName, setNavbarClassName] = useState("");
+    const [user, setUser] = useState({})
 
     useEffect(() => {
         let cls =
             "bg-brand-olive p-10 inset-0 md:bg-transparent md:relative md:block md:p-0";
         if (navActive) setNavbarClassName(`${cls} fixed`);
         else setNavbarClassName(`${cls} hidden`);
-    }, [navActive]);
+        async function getProfile() {
+            setUser(await getProfileInfoId(session?.user?.id));
+        }
+        if (session) getProfile();
+    }, [navActive, session]);
 
     return (
         <>
@@ -122,15 +128,16 @@ export default function Header(props) {
                                                         Editar
                                                     </Link>
                                                 </li>
-                                                {!session
-                                                    // Falta verificar si es un admin para mostrar un link a dashboard
-                                                    ? null
-                                                    : <li className="hover:bg-brand-olive transition-colors px-2 py-1 rounded">
-                                                        <Link href="/reservas">
-                                                            Reservas
-                                                        </Link>
-                                                    </li>
-                                                }
+                                                <li className="hover:bg-brand-olive transition-colors px-2 py-1 rounded">
+                                                    <Link href="/reservas">
+                                                        Reservas
+                                                    </Link>
+                                                </li>
+                                                {user.role > 1 ? <li className="hover:bg-brand-olive transition-colors px-2 py-1 rounded">
+                                                    <Link href="/admin">
+                                                        Dashboard
+                                                    </Link>
+                                                </li> : null}
                                             </ul>
                                         </button>
                                     </li>
