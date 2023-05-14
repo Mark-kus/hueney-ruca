@@ -86,19 +86,27 @@ export default function UserForm({ user }) {
       axios
         .put(`/api/profile/${user.id}`, inputs)
         .then((res) => {
-          alert("UHU! Hemos actualizado los datos del usuario");
+          Swal.fire('Yuju!', 'Actualizamos exitosamente este usuario', 'success')
           router.push("/admin/users");
         })
-        .catch((err) => console.log("Error", err));
+        .catch((err) => {
+          console.log("Error", err)
+          Swal.fire('Ohoh :(', 'Hubo un error al actualizar este usuario, intenta más tarde', 'error');
+          setStatus(false);
+        });
     } else {
       // crear
       axios
         .post(`/api/profile/`, inputs)
         .then((res) => {
-          alert("UHU! Hemos creado un nuevo usuario");
+          Swal.fire('Whoa!', 'Este usuario ya está listo', 'success');
           router.push("/admin/users");
         })
-        .catch((err) => console.log("Error", err));
+        .catch((err) => {
+          console.log("Error", err)
+          Swal.fire('Ohoh :(', 'Hubo un error al crear el usuario, intenta más tarde', 'error');
+          setStatus(false);
+        });
     }
   };
 
