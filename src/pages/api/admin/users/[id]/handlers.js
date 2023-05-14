@@ -1,9 +1,10 @@
 const handlerUserId = {};
+import { supabase } from "utils/supabase.js";
 import userRoleController from "./controllers.js";
 
 handlerUserId.updateRole = async (req, res) => {
     const { id } = req.query;
-    const { prevRole } = req.body;
+    const { prevRole, adminRoleSessionId } = req.body;
     try {
         if (prevRole == 1) {
             const updateUser = await userRoleController.asignAdminRole(id);
