@@ -50,11 +50,12 @@ export const postRoom = async (form_data) => {
 };
 
 //UPDATE
-export const upRoom = async (id, form_data, suspend) => {
+export const upRoom = async (form, id, suspend) => {
   if (suspend === undefined) {
+    console.log(form);
     const { data: upRoom, error } = await supabase
       .from("rooms")
-      .update(form_data)
+      .update(form)
       .eq("id", id)
       .select();
     if (error) {
