@@ -1,11 +1,17 @@
 const handlerUserId = {};
 import { supabase } from "utils/supabase.js";
 import userRoleController from "./controllers.js";
+import { getProfileInfoId } from "helpers/dbHelpers.js";
 
 handlerUserId.updateRole = async (req, res) => {
     const { id } = req.query;
     const { prevRole, adminRoleSessionId } = req.body;
+
     try {
+        const superAdminInfo = await getProfileInfoId(adminRoleSessionId);
+        if (superAdminInfo.role !== 3) {
+            throw new Error("Permisos invalidos");
+        }
         if (prevRole == 1) {
             const updateUser = await userRoleController.asignAdminRole(id);
             res.json(updateUser);
