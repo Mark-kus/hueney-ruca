@@ -3,6 +3,7 @@ import { useState } from "react";
 import BtnSubmit from "./BtnSubmit";
 import Preload from "../PreloadSmall";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function UserForm({ user }) {
   const router = useRouter();
@@ -76,7 +77,8 @@ export default function UserForm({ user }) {
     e.preventDefault();
     if (Object.values(errors).some((error) => error !== null)) {
       // Si hay un error, se evita hacer el submit y tira un alert vintage
-      throw alert("Es necesario corregir los errores");
+      Swal.fire('Debes correjir los errores', '', 'warning');
+      return;
     }
     setStatus(true);
     if (user?.id) {
@@ -84,19 +86,27 @@ export default function UserForm({ user }) {
       axios
         .put(`/api/profile/${user.id}`, inputs)
         .then((res) => {
-          alert("UHU! Hemos actualizado los datos del usuario");
+          Swal.fire('Yuju!', 'Actualizamos exitosamente este usuario', 'success')
           router.push("/admin/users");
         })
-        .catch((err) => console.log("Error", err));
+        .catch((err) => {
+          console.log("Error", err)
+          Swal.fire('Ohoh :(', 'Hubo un error al actualizar este usuario, intenta más tarde', 'error');
+          setStatus(false);
+        });
     } else {
       // crear
       axios
         .post(`/api/profile/`, inputs)
         .then((res) => {
-          alert("UHU! Hemos creado un nuevo usuario");
+          Swal.fire('Whoa!', 'Este usuario ya está listo', 'success');
           router.push("/admin/users");
         })
-        .catch((err) => console.log("Error", err));
+        .catch((err) => {
+          console.log("Error", err)
+          Swal.fire('Ohoh :(', 'Hubo un error al crear el usuario, intenta más tarde', 'error');
+          setStatus(false);
+        });
     }
   };
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import Swal from "sweetalert2";
+import swalError from './swalError.js';
 
 /**
  * Recibe un string para lanzar una alerta y elegir la accion a tomar.
@@ -39,7 +40,7 @@ export default async function swalAction(instancia, id, setter, data, route) {
                 // Envía un query 'true' para dar el toggle, no es explicitamente el valor de suspended
                 return await axios.put(`/api/${route}/${id}?suspend=true`);
             } catch (error) {
-                Swal.fire('Nope', 'Ocurrió un error, intenta más tarde', 'error');
+                swalError()
                 return false;
             }
         },
@@ -48,7 +49,7 @@ export default async function swalAction(instancia, id, setter, data, route) {
             try {
                 return await axios.delete(`/api/${route}/${id}`)
             } catch (error) {
-                Swal.fire('Nope', 'Ocurrió un error, intenta más tarde', 'error');
+                swalError()
                 return false;
             }
         }
