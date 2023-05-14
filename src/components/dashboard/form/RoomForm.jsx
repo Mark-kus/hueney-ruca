@@ -62,6 +62,12 @@ export default function RoomForm({ room }) {
     const submitHandler = (e) => {
         e.preventDefault();
         setStatus(true);
+        // JHONNY, EJECUTA LO QUE HAY EN ESTE IF AL HABER ERRORES ACTIVOS, GRACIAS
+        // if (Object.values(errors).some((error) => error !== null)) {
+        //     // Si hay un error, se evita hacer el submit y tira un alert vintage
+        //     Swal.fire('Debes correjir los errores', '', 'warning');
+        //     return;
+        // }
 
         if (room?.id) {
             axios
