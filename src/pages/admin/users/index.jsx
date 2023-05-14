@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import emailjs from "@emailjs/browser";
 import { useEffect, useState } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
+import Swal from "sweetalert2";
 
 const table_head = [
     { idx: "name", title: "Nombre", width: "min-w-[220px]" },
@@ -86,9 +87,8 @@ export default function Dashboard() {
                 {
                     user_name: username,
                     user_email: usermail,
-                    message: `Hola${
-                        username ? ` ${username}` : ""
-                    }, lamentamos informarte que hemos tomado acciones
+                    message: `Hola${username ? ` ${username}` : ""
+                        }, lamentamos informarte que hemos tomado acciones
           con tu usuario, ahora estas ${response}.`,
                 },
                 process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY
@@ -97,7 +97,12 @@ export default function Dashboard() {
     };
 
     const roleChange = async (targetId, targetRole) => {
-        const response = await fetch(`/api/admin/users/${targetId}`, {
+        if (targetRole === 3) {
+            Swal.fire('Simio no mata simio', '', 'warning')
+            return;
+            // Jaja, te la rifaste Fernando
+        };
+        fetch(`/api/admin/users/${targetId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -106,9 +111,28 @@ export default function Dashboard() {
                 prevRole: targetRole,
                 adminRoleSessionId: session.user.id,
             }),
-        });
-        const data = await response.json();
-        console.log(data);
+        })
+            .then(response => response.json())
+            .then(data => {
+                const user = data.data[0];
+                Swal.fire(
+                    'Nice!',
+                    `Hemos actalizado a ${user.full_name || user.email}, ahora es un ${user.role === 2 ? 'administrador' : 'usuario'}.`,
+                    'success'
+                );
+                const objective = users.find(userMap => userMap.id === user.id);
+                const otherUsers = users.filter(userMap => userMap.id !== user.id);
+                objective.role = user.role;
+                setUsers([objective, ...otherUsers,]);
+            })
+            .catch(err => {
+                console.log(err);
+                Swal.fire(
+                    'Ohoh...',
+                    'Algo salió mal, intenta más tarde',
+                    'error'
+                );
+            })
     };
 
     return (
@@ -141,11 +165,10 @@ export default function Dashboard() {
                                     users.map((user, i) => (
                                         <tr key={i}>
                                             <td
-                                                className={`border-[#eee] py-5 px-4 ${
-                                                    i < user.length - 1
-                                                        ? "border-b"
-                                                        : ""
-                                                }`}
+                                                className={`border-[#eee] py-5 px-4 ${i < user.length - 1
+                                                    ? "border-b"
+                                                    : ""
+                                                    }`}
                                             >
                                                 <h5 className="text-black text-sm font-semibold capitalize">
                                                     {user.name
@@ -157,15 +180,16 @@ export default function Dashboard() {
                                                 </p>
                                             </td>
                                             <td
-                                                className={`border-[#eee] py-5 px-4 ${
-                                                    i < user.length - 1
-                                                        ? "border-b"
-                                                        : ""
-                                                }`}
+                                                className={`border-[#eee] py-5 px-4 ${i < user.length - 1
+                                                    ? "border-b"
+                                                    : ""
+                                                    }`}
                                             >
                                                 {/* EL ROL DEL USUARIO */}
                                                 <h5
-                                                    className="text-black text-sm font-semibold capitalize"
+                                                    className={`text-black text-sm font-semibold capitalize p-2 inline
+                                                    ${user.role < 3 ? `hover:bg-black hover:text-white transition-colors
+                                                    hover:cursor-pointer` : null}`}
                                                     onClick={() => {
                                                         roleChange(
                                                             user.id,
@@ -176,38 +200,35 @@ export default function Dashboard() {
                                                     {user.role === 3
                                                         ? "SuperAdmin"
                                                         : user.role === 2
-                                                        ? "Admin"
-                                                        : "User"}
+                                                            ? "Admin"
+                                                            : "User"}
                                                 </h5>
                                             </td>
                                             <td
-                                                className={`border-[#eee] py-5 px-4 ${
-                                                    i < user.length - 1
-                                                        ? "border-b"
-                                                        : ""
-                                                }`}
+                                                className={`border-[#eee] py-5 px-4 ${i < user.length - 1
+                                                    ? "border-b"
+                                                    : ""
+                                                    }`}
                                             >
                                                 <p className="text-sm font-medium">
                                                     {totalBookings(user.id)}
                                                 </p>
                                             </td>
                                             <td
-                                                className={`border-[#eee] py-5 px-4 ${
-                                                    i < user.length - 1
-                                                        ? "border-b"
-                                                        : ""
-                                                }`}
+                                                className={`border-[#eee] py-5 px-4 ${i < user.length - 1
+                                                    ? "border-b"
+                                                    : ""
+                                                    }`}
                                             >
                                                 <p className="text-sm font-medium">
                                                     {lastBooking(user.id)}
                                                 </p>
                                             </td>
                                             <td
-                                                className={`border-[#eee] py-5 px-4 ${
-                                                    i < user.length - 1
-                                                        ? "border-b"
-                                                        : ""
-                                                }`}
+                                                className={`border-[#eee] py-5 px-4 ${i < user.length - 1
+                                                    ? "border-b"
+                                                    : ""
+                                                    }`}
                                             >
                                                 <div className="flex items-center space-x-3.5">
                                                     <Link
