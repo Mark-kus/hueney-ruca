@@ -81,7 +81,8 @@ export default function ReviewForm({ review }) {
     e.preventDefault();
     if (Object.values(errors).some((error) => error !== null)) {
       // Si hay un error, se evita hacer el submit y tira un alert vintage
-      throw alert("Es necesario corregir los errores");
+      Swal.fire('Debes correjir los errores', '', 'warning');
+      return;
     }
     setStatus(true);
     if (review?.id) {

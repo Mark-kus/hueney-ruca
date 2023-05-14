@@ -3,6 +3,7 @@ import { useState } from "react";
 import BtnSubmit from "./BtnSubmit";
 import Preload from "../PreloadSmall";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function UserForm({ user }) {
   const router = useRouter();
@@ -76,7 +77,8 @@ export default function UserForm({ user }) {
     e.preventDefault();
     if (Object.values(errors).some((error) => error !== null)) {
       // Si hay un error, se evita hacer el submit y tira un alert vintage
-      throw alert("Es necesario corregir los errores");
+      Swal.fire('Debes correjir los errores', '', 'warning');
+      return;
     }
     setStatus(true);
     if (user?.id) {
