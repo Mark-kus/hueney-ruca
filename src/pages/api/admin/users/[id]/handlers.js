@@ -1,5 +1,4 @@
 const handlerUserId = {};
-import { supabase } from "utils/supabase.js";
 import userRoleController from "./controllers.js";
 import { getProfileInfoId } from "helpers/dbHelpers.js";
 
@@ -18,6 +17,8 @@ handlerUserId.updateRole = async (req, res) => {
         } else if (prevRole == 2) {
             const updateUser = await userRoleController.removeAdminRole(id);
             res.json(updateUser);
+        } else if (prevRole == 3) {
+            res.json({ error: "El superadmin no puede ser modificado" });
         }
     } catch (error) {
         res.status(500).json({ error: error.message });

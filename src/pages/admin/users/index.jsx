@@ -7,6 +7,7 @@ import swalAction from "components/dashboard/swalAction";
 import dayjs from "dayjs";
 import emailjs from "@emailjs/browser";
 import { useEffect, useState } from "react";
+import { useSession } from "@supabase/auth-helpers-react";
 
 const table_head = [
     { idx: "name", title: "Nombre", width: "min-w-[220px]" },
@@ -17,6 +18,7 @@ const table_head = [
 ];
 
 export default function Dashboard() {
+    const session = useSession();
     const [users, setUsers] = useState([]);
     const [bookings, setBookings] = useState([]);
 
@@ -94,6 +96,21 @@ export default function Dashboard() {
         }
     };
 
+    const roleChange = async (targetId, targetRole) => {
+        const response = await fetch(`/api/admin/users/${targetId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                prevRole: targetRole,
+                adminRoleSessionId: session.user.id,
+            }),
+        });
+        const data = await response.json();
+        console.log(data);
+    };
+
     return (
         <Layout>
             <Header
@@ -146,7 +163,16 @@ export default function Dashboard() {
                                                         : ""
                                                 }`}
                                             >
-                                                <h5 className="text-black text-sm font-semibold capitalize">
+                                                {/* EL ROL DEL USUARIO */}
+                                                <h5
+                                                    className="text-black text-sm font-semibold capitalize"
+                                                    onClick={() => {
+                                                        roleChange(
+                                                            user.id,
+                                                            user.role
+                                                        );
+                                                    }}
+                                                >
                                                     {user.role === 3
                                                         ? "SuperAdmin"
                                                         : user.role === 2
