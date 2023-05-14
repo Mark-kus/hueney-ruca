@@ -4,8 +4,10 @@ import BtnSubmit from "./BtnSubmit";
 import Preload from "../PreloadSmall";
 import axios from "axios";
 import Swal from "sweetalert2";
+import emailjs from '@emailjs/browser';
 
 export default function ReviewForm({ review }) {
+  console.log(review);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState([]);
@@ -86,10 +88,24 @@ export default function ReviewForm({ review }) {
     setStatus(true);
     if (review?.id) {
       // actualizar
+      const username = review.profiles.username;
+      const usermail = review.profiles.email;
       axios
         .put(`/api/comments/${review.id}`, form)
         .then((res) => {
-          // acá va el envío de mail, cuando se fixee el update de reviews lo hago. atte: Marquitos
+          // envío de mail al usuario
+          emailjs.send(
+            process.env.NEXT_PUBLIC_EMAIL_SERVICE_ID,
+            process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_GENERIC,
+            {
+              user_name: username ? username : '',
+              user_email: usermail,
+              message: `Hola${username ? ` ${username}` : ''}, queriamos avisarte que hemos revisado tu comentario! 
+                Si fue aprobado, podras verlo en https://hueney-ruca-henry.vercel.app/comentarios.
+                Gracias por darte el tiempo!`,
+            },
+            process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY
+          )
           Swal.fire('Yuju!', 'Actualizamos exitosamente este comentario', 'success')
           router.push("/admin/reviews");
         })
