@@ -22,6 +22,8 @@ export default function Header({ user, actionOpenSidebar }) {
 				Swal.fire('No pudimos cargar tu avatar', '', 'warning')
 			}
 		}
+
+		downloadImage(user.avatar_url)
 	}, []);
 
 	return (
