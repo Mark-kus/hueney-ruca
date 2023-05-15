@@ -58,6 +58,12 @@ export const postRoom = async (form_data) => {
         unit_amount: parseInt(form_data.price) * 100,
         currency: "ars",
     });
+    ////////////
+    const insertPrice = await stripe.products.update(newCabana.id, {
+        default_price: newCabanaPrice.id,
+    });
+
+    ////////////
     form_data.stripe_product_id = newCabana.id;
     //Creacion en base de datos
     const { data: postRoom, error } = await supabase
