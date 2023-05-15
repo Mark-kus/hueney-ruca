@@ -6,7 +6,8 @@ import Swal from "sweetalert2";
 
 const CabinBuckets = ({ type, name }) => {
   //en los buckets de Supabase no permite la ñ
-  const newName = name.replace("Cabaña ", "");
+  const newName = name && name.startsWith("Cabaña ") ? name.replace("Cabaña ", "") : 
+  name;
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
 
