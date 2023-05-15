@@ -25,7 +25,11 @@ export default function Room({ room }) {
             {room.images ? (
                 <NavSliders cabanas={room.images.url} />
             ) : (
-                <div>No hay imagenes</div>
+                <div className="h-10 overflow-hidden shadow-lg">
+                    <h1 className="text-center" >
+                        No se cargaron imagenes
+                    </h1>
+                </div>
             )}
 
             <div
