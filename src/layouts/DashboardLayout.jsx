@@ -8,12 +8,14 @@ import { getProfileInfoId } from 'helpers/dbHelpers';
 export default function Layout({ children }) {
 	const [sidebarStatus, setSidebarStatus] = useState(true);
 	const [loading, setLoading] = useState(true);
+	const [user, setUser] = useState({});
 	const session = useSession();
 	const router = useRouter();
 
 	useEffect(() => {
 		async function getProfile() {
-			const user = await getProfileInfoId(session?.user?.id)
+			const user = await getProfileInfoId(session?.user?.id);
+			setUser(user);
 			if (session === null || user.role < 2) {
 				router.push('/');
 			} else {
@@ -37,7 +39,7 @@ export default function Layout({ children }) {
 					sidebarStatus={sidebarStatus}
 					actionCloseSidebar={closeSidebar} />
 				<div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-					<Header actionOpenSidebar={openSidebar} />
+					<Header actionOpenSidebar={openSidebar} user={user} />
 					<main>
 						<div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
 							<div>{children}</div>
