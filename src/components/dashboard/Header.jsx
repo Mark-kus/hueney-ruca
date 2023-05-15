@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import { supabase } from "utils/supabase";
 
 export default function Header({ user, actionOpenSidebar }) {
+	const [avatar, setAvatar] = useState();
 	const [sidebarToggle, setSidebarToggle] = useState(false)
 	const openSidebar = () => actionOpenSidebar()
 
@@ -14,14 +17,13 @@ export default function Header({ user, actionOpenSidebar }) {
 					throw error;
 				}
 				const url = URL.createObjectURL(data);
-				setAvatarUrl(url);
+				setAvatar(url);
 			} catch (error) {
-				console.log("Error downloading image: ", error);
+				Swal.fire('No pudimos cargar tu avatar', '', 'warning')
 			}
 		}
 	}, []);
-	
-	console.log(user);
+
 	return (
 		<header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1">
 			<div className="flex flex-grow items-center justify-between py-4 px-4 shadow-2 md:px-6 2xl:px-11">
@@ -179,7 +181,7 @@ export default function Header({ user, actionOpenSidebar }) {
 
 							<span className="rounded-full">
 								<img
-									src={user.avatar_url}
+									src={avatar}
 									className="bg-primary text-white grid place-content-center w-10 h-10 rounded-full" />
 							</span>
 						</div>
