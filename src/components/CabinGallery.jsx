@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 const CabinGallery = ({ type, name }) => {
   const urlBucket =
     "https://kwmjganrkoyleqdillhu.supabase.co/storage/v1/object/public/cabanas_gallery";
-  const newName = name.replace("Cabaña ", "");
+    const newName = name && name.startsWith("Cabaña ") ? name.replace("Cabaña ", "") : name;
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
 
