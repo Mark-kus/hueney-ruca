@@ -7,11 +7,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import SummaryCheckOut from "components/SummaryCheckOut";
 import { addDays, diffDays } from "helpers/dateProcessing";
+import SkeletonCheckOutForm from "components/SkeletonCheckOutForm";
 
 export default function CheckOut({ room, url }) {
   const session = useSession();
 
   const [matchingProduct, setMatchingProduct] = useState(null);
+  const [loading, setLoading] = useState(true)
   //QUEDA DEFINIR SI USAREMOS COSAS COMO EXTRAS O DESCUENTOS
   const mock = {
     extra: 20,
@@ -31,6 +33,7 @@ export default function CheckOut({ room, url }) {
         (product) => product.name === room.name
       );
       setMatchingProduct(matching);
+      setLoading(false)
     }
     fetchProducts();
   }, []);
@@ -51,7 +54,7 @@ export default function CheckOut({ room, url }) {
             </h1>
           </div>
           <div className="flex flex-col pt-4 pb-18 pl-4 pr-4 md:pl-20 md:pr-20 items-center md:flex-row md:justify-between">
-            {matchingProduct && matchingProduct.name === room.name && (
+            {loading ? (<SkeletonCheckOutForm />) : (matchingProduct && matchingProduct.name === room.name && (
               <>
                 <CheckOutForm
                   filters={filters}
@@ -66,7 +69,7 @@ export default function CheckOut({ room, url }) {
                   )}
                   extra={mock.extra}
                 />
-                <SummaryCheckOut
+                {/* <SummaryCheckOut
                   url={url}
                   name={room.name}
                   price={room.price}
@@ -75,9 +78,9 @@ export default function CheckOut({ room, url }) {
                     new Date(filters.checkout)
                   )}
                   extra={mock.extra}
-                />
+                /> */}
               </>
-            )}
+            ))}
 
             {/* <img
           src="/ilustrationCheck.svg"
