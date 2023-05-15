@@ -8,12 +8,13 @@ import axios from "axios";
 import SummaryCheckOut from "components/SummaryCheckOut";
 import { addDays, diffDays } from "helpers/dateProcessing";
 import SkeletonCheckOutForm from "components/SkeletonCheckOutForm";
+import SkeletonSummaryCheck from "components/SkeletonSummaryCheck";
 
 export default function CheckOut({ room, url }) {
   const session = useSession();
 
   const [matchingProduct, setMatchingProduct] = useState(null);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   //QUEDA DEFINIR SI USAREMOS COSAS COMO EXTRAS O DESCUENTOS
   const mock = {
     extra: 20,
@@ -33,7 +34,7 @@ export default function CheckOut({ room, url }) {
         (product) => product.name === room.name
       );
       setMatchingProduct(matching);
-      setLoading(false)
+      setLoading(false);
     }
     fetchProducts();
   }, []);
@@ -54,33 +55,41 @@ export default function CheckOut({ room, url }) {
             </h1>
           </div>
           <div className="flex flex-col pt-4 pb-18 pl-4 pr-4 md:pl-20 md:pr-20 items-center md:flex-row md:justify-between">
-            {loading ? (<SkeletonCheckOutForm />) : (matchingProduct && matchingProduct.name === room.name && (
+            {loading ? (
               <>
-                <CheckOutForm
-                  filters={filters}
-                  setFilters={setFilters}
-                  room={room}
-                  name={matchingProduct.name}
-                  price={matchingProduct.price}
-                  default_price={matchingProduct.default_price}
-                  night={diffDays(
-                    new Date(filters.checkin),
-                    new Date(filters.checkout)
-                  )}
-                  extra={mock.extra}
-                />
-                {/* <SummaryCheckOut
-                  url={url}
-                  name={room.name}
-                  price={room.price}
-                  night={diffDays(
-                    new Date(filters.checkin),
-                    new Date(filters.checkout)
-                  )}
-                  extra={mock.extra}
-                /> */}
+                <SkeletonCheckOutForm />
+                <SkeletonSummaryCheck />
               </>
-            ))}
+            ) : (
+              matchingProduct &&
+              matchingProduct.name === room.name && (
+                <>
+                  <CheckOutForm
+                    filters={filters}
+                    setFilters={setFilters}
+                    room={room}
+                    name={matchingProduct.name}
+                    price={matchingProduct.price}
+                    default_price={matchingProduct.default_price}
+                    night={diffDays(
+                      new Date(filters.checkin),
+                      new Date(filters.checkout)
+                    )}
+                    extra={mock.extra}
+                  />
+                  <SummaryCheckOut
+                    url={url}
+                    name={room.name}
+                    price={room.price}
+                    night={diffDays(
+                      new Date(filters.checkin),
+                      new Date(filters.checkout)
+                    )}
+                    extra={mock.extra}
+                  />
+                </>
+              )
+            )}
 
             {/* <img
           src="/ilustrationCheck.svg"
