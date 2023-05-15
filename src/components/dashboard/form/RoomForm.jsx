@@ -63,47 +63,47 @@ export default function RoomForm({ room }) {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    
-        // JHONNY, EJECUTA LO QUE HAY EN ESTE IF AL HABER ERRORES ACTIVOS, GRACIAS
-        // if (Object.values(errors).some((error) => error !== null)) {
-        //     Swal.fire('Debes correjir los errores', '', 'warning');
-        //     return;
-        // }
-    
+
+    // JHONNY, EJECUTA LO QUE HAY EN ESTE IF AL HABER ERRORES ACTIVOS, GRACIAS
+    // if (Object.values(errors).some((error) => error !== null)) {
+    //     Swal.fire('Debes correjir los errores', '', 'warning');
+    //     return;
+    // }
+
     setStatus(true);
-     if (room?.id) {
-            axios
-                .put("/api/cabanas", { form, idRoom: room.id })
-                .then((resp) => {
-                    // console.log(resp.data)
-                    Swal.fire('Yuju!', 'Actualizamos exitosamente tu cabaña', 'success')
-                    router.push("/admin/rooms");
-                })
-                .catch((err) => {
-                    console.log("Error", err)
-                    Swal.fire('Ohoh :(', 'Hubo un error al actualizar tu cabaña, intenta más tarde', 'error')
-                    setStatus(false);
-                });
-        } else {
-            axios
-                .post("/api/cabanas", form)
-                .then((resp) => {
-                    // console.log(resp.data)
-                    Swal.fire('Whoa!', 'Tu nueva cabaña ya está lista', 'success');
-                    router.push("/admin/rooms");
-                })
-                .catch((err) => {
-                    console.log("Error", err)
-                    Swal.fire('Ohoh :(', 'Hubo un error al crear tu cabaña, intenta más tarde', 'error')
-                    setStatus(false);
-                });
-        }
-    };
+    if (room?.id) {
+      axios
+        .put("/api/cabanas", { form, idRoom: room.id })
+        .then((resp) => {
+          // console.log(resp.data)
+          Swal.fire('Yuju!', 'Actualizamos exitosamente tu cabaña', 'success')
+          router.push("/admin/rooms");
+        })
+        .catch((err) => {
+          console.log("Error", err)
+          Swal.fire('Ohoh :(', 'Hubo un error al actualizar tu cabaña, intenta más tarde', 'error')
+          setStatus(false);
+        });
+    } else {
+      axios
+        .post("/api/cabanas", form)
+        .then((resp) => {
+          // console.log(resp.data)
+          Swal.fire('Whoa!', 'Tu nueva cabaña ya está lista', 'success');
+          router.push("/admin/rooms");
+        })
+        .catch((err) => {
+          console.log("Error", err)
+          Swal.fire('Ohoh :(', 'Hubo un error al crear tu cabaña, intenta más tarde', 'error')
+          setStatus(false);
+        });
+    }
+  };
 
   const [mostrarGallery, setMostrarGallery] = useState(false);
   const buttonTextGallery = mostrarGallery
-    ? `Esconder imágenes de ${room?.name}`
-    : `Ver imágenes de ${room?.name}`;
+    ? `Ocultar imágenes de ${room?.name}`
+    : `Mostrar imágenes de ${room?.name}`;
 
   const [mostrarBucket, setMostrarBucket] = useState(false);
   const buttonTextBucket = mostrarBucket
@@ -358,41 +358,42 @@ export default function RoomForm({ room }) {
 
         {/* NOTA: Falta implementar el file upload */}
         <div className="col-span-5 xl:col-span-2">
-          <div>
-            <button
-              onClick={() => setMostrarGallery(!mostrarGallery)}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-5 rounded"
-            >
-              {buttonTextGallery}
-            </button>
-            {mostrarGallery && (
-              <CabinGallery
-                type={room?.type}
-                name={room?.name}
-                className="mt-4"
-              />
-            )}
-          </div>
 
           <div>
-            <button
+            {/* <button
               onClick={() => setMostrarBucket(!mostrarBucket)}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-5 rounded"
-            >
+              >
               {buttonTextBucket}
-            </button>
-            {mostrarBucket && (
+            </button> */}
+            {/* {mostrarBucket && ( */}
               <CabinBuckets
                 type={room?.type}
                 name={room?.name}
                 className="mt-4"
               />
-            )}
+            {/* )} */}
           </div>
+          
+            <div className="flex flex-col w-2/3 items-center m-auto my-2">
+              <button
+                onClick={() => setMostrarGallery(!mostrarGallery)}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                {buttonTextGallery}
+              </button>
+              {mostrarGallery && (
+                <CabinGallery
+                  type={room?.type}
+                  name={room?.name}
+                  className=""
+                />
+              )}
+            </div>
 
-          <div className="rounded-sm border border-stroke bg-white shadow-default">
+          {/* <div className="rounded-sm border border-stroke bg-white shadow-default">
             <div className="p-7">
-              <form action="#">
+               <form action="#">
                 <div
                   id="FileUpload"
                   className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded border-2 border-dashed border-primary bg-gray py-4 px-4 dark:bg-meta-4 sm:py-7.5"
@@ -458,11 +459,11 @@ export default function RoomForm({ room }) {
                     Save
                   </button>
                 </div>
-              </form>
+              </form> 
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
   );
-  }
+}

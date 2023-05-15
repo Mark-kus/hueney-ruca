@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { getProfileInfoId } from 'helpers/dbHelpers';
 
 export default function Layout({ children }) {
-	const [sidebarStatus, setSidebarStatus] = useState(true);
+	const [sidebarStatus, setSidebarStatus] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [user, setUser] = useState({});
 	const session = useSession();
