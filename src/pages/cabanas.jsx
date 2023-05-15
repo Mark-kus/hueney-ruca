@@ -13,20 +13,20 @@ export default function Cabins({ plans }) {
   useEffect(() => {
     async function getCabins() {
       const response = await axios.get("/api/cabanas");
-  
-       const pricesMap = plans.reduce((map, plan) => {
+
+      const pricesMap = plans.reduce((map, plan) => {
         map[plan.name] = plan.price / 100;
         return map;
       }, {});
-  
+
       const cabinsWithPrices = response.data.map((cabin, index) => ({
         ...cabin,
         price: pricesMap[cabin.name] || null,
       }));
-  
+
       setCabins(cabinsWithPrices);
     }
-  
+
     getCabins();
   }, []);
 
@@ -86,50 +86,55 @@ export default function Cabins({ plans }) {
             {cabins.map((cabin) => (
               <div key={cabin.id} className="group">
                 <div className="mx-8 text-center rounded-2xl mb-8 overflow-hidden">
-                {cabin.images
-                ? (
-									<div 
-										className="h-56 overflow-hidden rounded-2xl shadow-lg">
-										<img 
-											src={cabin.images.url[0].fileUrl} 
-											alt={cabin.name} 
-											className="w-full h-full object-cover"/>
-								</div>
-								)
-              : <div className="bg-slate-300 rounded-t-xl">No hay imagenes</div>}
+                  {cabin.images
+                    ? (
+                      <div
+                        className="h-56 overflow-hidden rounded-2xl shadow-lg">
+                        <img
+                          src={cabin.images.url[0].fileUrl}
+                          alt={cabin.name}
+                          className="w-full h-full object-cover" />
+                      </div>
+                    )
+                    : <div className="h-56 overflow-hidden rounded-2xl shadow-lg">
+                      <img
+                        src="https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
+                        alt={cabin.name}
+                        className="w-full h-full object-cover" />
+                    </div>}
 
-                <h2 className="text-brand-green font-bold text-3xl mt-5">
-                  {cabin.name}
-                </h2>
+                  <h2 className="text-brand-green font-bold text-3xl mt-5">
+                    {cabin.name}
+                  </h2>
 
-                <div className="text-sm flex justify-center items-center mt-2">
-                  <img src={people.src} alt="Capacidad" className="mx-2" />
-                  <p>{cabin.capacity}</p>
-                  <p className="mx-2">|</p>
-                  <img src={house.src} alt="Habitaciones" className="mx-2" />
-                  <p>
-                    {Number(cabin.rooms) > 1
-                      ? `${cabin.rooms} Habitaciones`
-                      : "Monoambiente"}
-                  </p>
+                  <div className="text-sm flex justify-center items-center mt-2">
+                    <img src={people.src} alt="Capacidad" className="mx-2" />
+                    <p>{cabin.capacity}</p>
+                    <p className="mx-2">|</p>
+                    <img src={house.src} alt="Habitaciones" className="mx-2" />
+                    <p>
+                      {Number(cabin.rooms) > 1
+                        ? `${cabin.rooms} Habitaciones`
+                        : "Monoambiente"}
+                    </p>
+                  </div>
+
+                  <div className="text-xs leading-tight font-medium mt-2">
+                    {cabin.price ? (
+                      <>
+                        <div>Precio: {cabin.price} ARS / día</div>
+                      </>
+                    ) : (
+                      <div className="opacity-40">Precio no disponible</div>
+                    )}
+                  </div>
+
+                  <Link href={`/cabanas/${cabin.id}`} className="btn-yellow mt-6 mb-8">Ver más</Link>
                 </div>
-
-                <div className="text-xs leading-tight font-medium mt-2">
-                  {cabin.price ? (
-                    <>
-                      <div>Precio: {cabin.price} ARS / día</div>
-                    </>
-                  ) : (
-                    <div className="opacity-40">Precio no disponible</div>
-                  )}
-                </div>
-
-                <Link href={`/cabanas/${cabin.id}`} className="btn-yellow mt-6 mb-8">Ver más</Link>
-              </div>
               </div>
             ))}
           </Slider >
-          
+
         </div>
       </div>
     </Layout>
