@@ -3,20 +3,14 @@ import Link from "next/link";
 import NavSliders from "components/NavSliders.jsx";
 import Datepicker from "react-tailwindcss-datepicker";
 import { supabase } from "utils/supabase";
-import { useSession } from "@supabase/auth-helpers-react";
-import { getAllDisabledDates } from "helpers/dateProcessing.js";
 import { useState } from "react";
 
 export default function Room({ room }) {
-    const description = room.description.replace(/,|\./g, "");
-    const session = useSession();
-
     const [value, setValue] = useState({
         startDate: null,
         endDate: null,
     });
     const handleValueChange = (newValue) => {
-        console.log("newValue:", newValue);
         setValue(newValue);
     };
 
@@ -69,11 +63,20 @@ export default function Room({ room }) {
                             </div>
                         </div>
 
-                        <div className="whitespace-pre-wrap text-sm px-6 mt-5">
-                            {description}
-                        </div>
+                        <ul className="my-5">
+                            <h1 className="">Incluye:</h1>
+                            {room.services.map(service => (
+                                <li className="whitespace-pre-wrap text-sm ml-2">
+                                    <p>-{service}</p>
+                                </li>
+                            ))}
+                        </ul>
 
-                        <div className="mt-10">
+                        <p>
+                            {room.description}
+                        </p>
+
+                        <div className="mt-6">
                             <div className="text-sm font-semibold leading-none">
                                 Disponibilidad:{" "}
                             </div>
