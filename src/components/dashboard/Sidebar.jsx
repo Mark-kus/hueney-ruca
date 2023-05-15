@@ -3,18 +3,18 @@ import Link from 'next/link'
 
 
 
-export default function Sidebar(props){
+export default function Sidebar(props) {
 
 	const [sidebarToggle, setSidebarToggle] = useState(true)
 	const closeSidebar = () => props.actionCloseSidebar()
 
 	return (
 		<>
-			<aside 
+			<aside
 				className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 
 										flex-col overflow-y-hidden bg-black duration-300 
 										ease-linear lg:static lg:translate-x-0 
-										${ props.sidebarStatus ? 'translate-x-0' : '-translate-x-full' }`}>
+										${props.sidebarStatus ? 'translate-x-0' : '-translate-x-full'}`}>
 
 				{/* SIDEBAR HEADER */}
 				<div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
@@ -22,7 +22,7 @@ export default function Sidebar(props){
 						<img
 							src="/brand.svg"
 							alt="Hueney Ruca"
-							className="w-32 md:w-48"/>
+							className="w-32 md:w-48" />
 					</Link>
 
 
@@ -48,61 +48,66 @@ export default function Sidebar(props){
 					{/* Sidebar Menu */}
 					<nav className="mt-5 py-4 px-4 lg:mt-9 lg:px-6">
 						{/* Menu Group */}
-							<h3 
-								className="mb-4 ml-4 text-sm font-medium text-bodydark2">
-								MENU
-							</h3>
-							
-							<ul className="mb-6 flex flex-col gap-1.5">
+						<Link
+							className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
+							href="/cabanas">
+							Back to page
+						</Link>
+						<h3
+							className="my-4 ml-4 text-sm font-medium text-bodydark2">
+							MENU
+						</h3>
 
-								<li>
-									<Link
-										className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
-										href="/admin">
-										<i className="ri-dashboard-line"></i>
-										Dashboard
-									</Link>
-								</li>
-								
-								<li>
-									<Link
-										className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
-										href="/admin/booking">
-										<i className="ri-calendar-check-line"></i>
-										Reservas
-									</Link>
-								</li>
-							
-								<li>
-									<Link
-										className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
-										href="/admin/reviews">
-										<i className="ri-chat-1-line"></i>
-										Reviews
-									</Link>
-								</li>
-							
-								<li>
-									<Link
-										className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
-										href="/admin/users">
-										<i className="ri-user-line"></i>
-										Huéspedes
-									</Link>
-								</li>
-								
-								<li>
-									<Link
-										className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
-										href="/admin/rooms">
-										<i className="ri-home-line"></i>
-										Cabañas
-									</Link>
-								</li>
+						<ul className="mb-6 flex flex-col gap-1.5">
+
+							<li>
+								<Link
+									className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
+									href="/admin">
+									<i className="ri-dashboard-line"></i>
+									Dashboard
+								</Link>
+							</li>
+
+							<li>
+								<Link
+									className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
+									href="/admin/booking">
+									<i className="ri-calendar-check-line"></i>
+									Reservas
+								</Link>
+							</li>
+
+							<li>
+								<Link
+									className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
+									href="/admin/reviews">
+									<i className="ri-chat-1-line"></i>
+									Reviews
+								</Link>
+							</li>
+
+							<li>
+								<Link
+									className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
+									href="/admin/users">
+									<i className="ri-user-line"></i>
+									Huéspedes
+								</Link>
+							</li>
+
+							<li>
+								<Link
+									className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
+									href="/admin/rooms">
+									<i className="ri-home-line"></i>
+									Cabañas
+								</Link>
+							</li>
 						</ul>
 					</nav>
 					{/* Sidebar Menu */}
-				</div> 
+				</div>
 			</aside>
 		</>
 
