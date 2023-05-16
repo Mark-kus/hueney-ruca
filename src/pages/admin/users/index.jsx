@@ -10,7 +10,9 @@ import { useEffect, useState } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
 import Swal from "sweetalert2";
 import FilterBarUsers from "components/FilterBarUsers";
+import Pagination from "components/Pagination";
 import { getProfileInfoId } from "helpers/dbHelpers";
+
 
 const table_head = [
     { idx: "name", title: "Nombre", width: "min-w-[220px]" },
@@ -26,6 +28,7 @@ export default function Dashboard() {
     const [users, setUsers] = useState([]);
     const [admin, setAdmin] = useState({});
     const [usersFiltered, setUsersFiltered] = useState([]);
+    const [displayedUsers, setDisplayedUsers] = useState([]);
 
     useEffect(() => {
         axios
@@ -184,8 +187,8 @@ export default function Dashboard() {
                             <TableHead data={table_head} />
 
                             <tbody>
-                                {usersFiltered instanceof Array &&
-                                    usersFiltered.map((user, i) => (
+                                {displayedUsers instanceof Array &&
+                                    displayedUsers.map((user, i) => (
                                         <tr key={i}>
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${i < user.length - 1
@@ -275,6 +278,15 @@ export default function Dashboard() {
                                     ))}
                             </tbody>
                         </table>
+                        <Pagination
+                            items={
+                                usersFiltered instanceof Array
+                                    ? usersFiltered
+                                    : []
+                            }
+                            displayedAmount={8}
+                            setDisplayedItems={setDisplayedUsers}
+                        />
                     </div>
                 </div>
             </div>
