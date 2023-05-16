@@ -7,6 +7,7 @@ import axios from "axios";
 
 export default function RoomForm({ room }) {
   const types = ["A", "B", "C"];
+  const [errors, setErrors] = useState({});
 
   const [form, setForm] = useState({
     name: room?.name || "", // `Cabaña #${ Date.now() }`,
@@ -37,9 +38,57 @@ export default function RoomForm({ room }) {
         [serviceName]: !userServices[serviceName],
       });
     } else {
+      // Validaciones de inputs
+      let error = null;
+
+      switch (name) {
+        case "name":
+          if (value.length > 32) {
+            error = "El nombre debe tener como máximo 32 caracteres";
+          }
+          break;
+        case "rooms":
+          if (value > 10) {
+            error = "El total de habitaciones no debe exceder de 10";
+          }
+          break;
+        case "capacity":
+          if (value > 10) {
+            error = "La capacidad maxima no debe exceder de 10";
+          }
+          break;
+        case "beds":
+          if (value > 10) {
+            error = "El total de camas no debe exceder de 10";
+          }
+          break;
+        case "bathrooms":
+          if (value > 10) {
+            error = "El total de banos no debe exceder de 10";
+          }
+          break;
+        case "price":
+          if (value > 10000) {
+            error = "El total de habitaciones no debe exceder de 10000";
+          }
+          break;
+        case "description":
+          if (value > 500) {
+            error = "La descripcion no debe exceder de 500 caracteres";
+          }
+          break;
+
+        default:
+          break;
+      }
+
       setForm({
         ...form,
         [name]: value,
+      });
+      setErrors({
+        ...errors,
+        [name]: error,
       });
     }
   };
@@ -60,6 +109,10 @@ export default function RoomForm({ room }) {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    if (Object.values(errors).some((error) => error !== null)) {
+      // Si hay un error, se evita hacer el submit y tira un alert vintage
+      throw alert("Es necesario corregir los errores");
+    }
     setStatus(true);
 
     if (room?.id) {
@@ -106,7 +159,9 @@ export default function RoomForm({ room }) {
                     id="name"
                     value={form.name}
                     onChange={changeHandler}
+                    required
                   />
+                  {errors.name && <div className="error">{errors.name}</div>}
                 </div>
 
                 <div className="flex gap-x-8 items-center">
@@ -166,7 +221,11 @@ export default function RoomForm({ room }) {
                       id="rooms"
                       value={form.rooms}
                       onChange={changeHandler}
+                      required
                     />
+                    {errors.rooms && (
+                      <div className="error">{errors.rooms}</div>
+                    )}
                   </div>
 
                   <div className="">
@@ -184,7 +243,11 @@ export default function RoomForm({ room }) {
                       id="capacity"
                       value={form.capacity}
                       onChange={changeHandler}
+                      required
                     />
+                    {errors.capacity && (
+                      <div className="error">{errors.capacity}</div>
+                    )}
                   </div>
                 </div>
 
@@ -204,7 +267,9 @@ export default function RoomForm({ room }) {
                       id="beds"
                       value={form.beds}
                       onChange={changeHandler}
+                      required
                     />
+                    {errors.beds && <div className="error">{errors.beds}</div>}
                   </div>
 
                   <div className="">
@@ -222,7 +287,11 @@ export default function RoomForm({ room }) {
                       id="bathrooms"
                       value={form.bathrooms}
                       onChange={changeHandler}
+                      required
                     />
+                    {errors.bathrooms && (
+                      <div className="error">{errors.bathrooms}</div>
+                    )}
                   </div>
                 </div>
 
@@ -246,7 +315,11 @@ export default function RoomForm({ room }) {
                       id="price"
                       value={form.price}
                       onChange={changeHandler}
+                      required
                     />
+                    {errors.price && (
+                      <div className="error">{errors.price}</div>
+                    )}
                   </div>
                 </div>
 
@@ -322,7 +395,11 @@ export default function RoomForm({ room }) {
                     rows="6"
                     value={form.description}
                     onChange={changeHandler}
+                    required
                   ></textarea>
+                  {errors.description && (
+                    <div className="error">{errors.description}</div>
+                  )}
                 </div>
 
                 <BtnSubmit cancel_url="/admin/rooms" />
