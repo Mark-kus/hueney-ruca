@@ -38,7 +38,7 @@ export default function Comentario() {
     const fetchComments = async () => {
       try {
         const response = await axios.get("/api/comments");
-        setComments(response.data);
+        setComments(response.data.filter(review => review.approved && !review.suspended && review.deleted_at === null));
       } catch (error) {
         console.error(error);
       }
