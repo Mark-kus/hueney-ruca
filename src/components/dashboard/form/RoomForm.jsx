@@ -71,7 +71,7 @@ export default function RoomForm({ room }) {
           }
           break;
         case "price":
-          if (value >= 100) {
+          if (value <= 100) {
             error = "El precio no puede ser menor a 100";
           }
           break;
