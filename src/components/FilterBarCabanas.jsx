@@ -30,7 +30,6 @@ export default function FilterBarCabanas({
         } else if (date === "fecha") {
             let c = [...filterBookings];
             c.sort((a, b) => {
-                console.log(new Date(a.created_at) - new Date(b.created_at));
                 return (
                     (new Date(a.created_at) - new Date(b.created_at)) * priority
                 );
@@ -39,7 +38,6 @@ export default function FilterBarCabanas({
         } else if (date === "checkin") {
             let c = [...filterBookings];
             c.sort((a, b) => {
-                console.log(new Date(a.checkin) - new Date(b.checkin));
                 return (new Date(a.checkin) - new Date(b.checkin)) * priority;
             });
             setResultBookings(c);
@@ -95,8 +93,8 @@ export default function FilterBarCabanas({
             </div>
             <div className="py-4 px-4">
                 <select
-                    name="orderSort"
-                    id="orderSort"
+                    name="priorityOrder"
+                    id="priorityOrder"
                     onChange={priorityHandler}
                 >
                     <option value="asc">Ascendente</option>
