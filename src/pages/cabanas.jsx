@@ -81,7 +81,7 @@ export default function Cabins({ plans }) {
           disfrutar!
         </div>
 
-        <div className="m-10">
+        <div className="my-10 md:m-10">
           <Slider {...settings}>
             {cabins.map((cabin) => (
               <div key={cabin.id} className="group">
