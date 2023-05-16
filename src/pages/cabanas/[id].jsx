@@ -95,7 +95,7 @@ export default function Room({ room }) {
                                 ${room.price}
                             </span>
                             <span className="text-brand-green text-opacity-60 relative top-1.5">
-                                /Día
+                                /Noche
                             </span>
                         </div>
 
