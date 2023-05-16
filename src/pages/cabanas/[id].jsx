@@ -3,8 +3,17 @@ import Link from "next/link";
 import NavSliders from "components/NavSliders.jsx";
 import Datepicker from "react-tailwindcss-datepicker";
 import { supabase } from "utils/supabase";
+import { useState } from "react";
 
 export default function Room({ room }) {
+    const [value, setValue] = useState({
+        startDate: null,
+        endDate: null,
+    });
+    const handleValueChange = (newValue) => {
+        console.log("newValue:", newValue);
+        setValue(newValue);
+    };
     return (
         <Layout>
             {room.images ? (
@@ -84,6 +93,9 @@ export default function Room({ room }) {
                                         })}
                                     useRange={false}
                                     asSingle={true}
+                                    value={value}
+                                    onChange={handleValueChange}
+                                    readOnly={true}
                                 ></Datepicker>
                             </div>
                         </div>

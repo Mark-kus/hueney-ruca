@@ -33,6 +33,7 @@ export default function DatePicker({ filters, setFilters, disabledDates }) {
                 popoverDirection="down"
                 minDate={new Date()}
                 placeholder={"Elija su fecha de check in y check out"}
+                readOnly={true}
             />
         </div>
     );
