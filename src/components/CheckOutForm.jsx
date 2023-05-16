@@ -36,7 +36,7 @@ export default function CheckOutForm({
             return;
         }
         if (filters.checkin == filters.checkout) {
-            setError("Fechas Invalidas");
+            setError("Minimo 1 noche");
             setShowAlert(true);
             setTimeout(() => {
                 setShowAlert(false);
@@ -67,6 +67,7 @@ export default function CheckOutForm({
             setShowAlert(true);
             setTimeout(() => {
                 setShowAlert(false);
+                setdisableButton(false);
             }, 2000);
             return;
         }
