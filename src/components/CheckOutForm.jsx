@@ -21,12 +21,15 @@ export default function CheckOutForm({
   // Este estado solo lo copie y pegue, para que no me de error el GuestSelector
   const session = useSession();
   const [showAlert, setShowAlert] = useState(false);
+  const [disableButton, setdisableButton] = useState(false);
 
   const clickHandler = async () => {
+    setdisableButton(true);
     if (filters.checkin === null || filters.checkout === null) {
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
+        setdisableButton(false);
       }, 2000);
       return;
     }
@@ -90,7 +93,7 @@ export default function CheckOutForm({
 
           <div className="pt-4 pb-6 w-full">
             <p className="text-lg text-black font-base pb-0.5">
-              Cant. personas
+              Cantidad personas
             </p>
             <div className="border-2 rounded-xl border-brand-light-green p-1">
               <GuestsSelector
@@ -109,7 +112,7 @@ export default function CheckOutForm({
               onClick={clickHandler}
               type="submit"
               role="link"
-              disabled={showAlert}
+              disabled={showAlert || disableButton}
             >
               {showAlert ? "Faltan registrar fechas" : "Reservar"}
             </button>

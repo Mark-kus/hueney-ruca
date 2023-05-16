@@ -23,6 +23,7 @@ export default function ThankYou() {
     const [thankYouData, setThankYouData] = useState({ null: true });
     const { session_id, booking_id } = router.query;
     const [checkoutSession, setCheckoutSession] = useState({ null: true });
+    const [buttonDisabled, setButtonDisabled] = useState(false);
     useEffect(() => {
         const getCheckOutSession = async () => {
             if (session_id === undefined) {
@@ -65,6 +66,7 @@ export default function ThankYou() {
     }, [checkoutSession]);
 
     const sendEmail = async () => {
+        setButtonDisabled(true);
         const username = thankYouData.session.customer_details.name;
         // envío de email, message es lo que va dentro de él
         emailjs.send(
@@ -79,8 +81,14 @@ export default function ThankYou() {
             },
             process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY
         )
-            .then(response => Swal.fire('Ya te enviamos un email con la información pedida', '', 'success'))
-            .catch(error => Swal.fire('Hubo un error al enviarte los datos', 'Intenta de nuevo más tarde', 'error'));
+            .then(response => {
+                Swal.fire('Ya te enviamos un email con la información pedida', '', 'success')
+                setButtonDisabled(false);
+            })
+            .catch(error => {
+                Swal.fire('Hubo un error al enviarte los datos', 'Intenta de nuevo más tarde', 'error')
+                setButtonDisabled(false);
+            });
     }
 
     return (
@@ -216,6 +224,7 @@ export default function ThankYou() {
                             <div className="flex justify-center pt-10">
                                 <button
                                     onClick={sendEmail}
+                                    disabled={buttonDisabled}
                                     className="inline-flex items-center justify-center w-full px-4 py-2 border border-transparent rounded-lg text-base font-medium text-white bg-brand-yellow hover:bg-opacity-80 transition duration-150 ease-in-out sm:w-auto"
                                 >
                                     Enviar resumen de compra

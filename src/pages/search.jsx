@@ -133,7 +133,7 @@ export default function Search() {
                     htmlFor="guests"
                     className="text-white block font-normal text-sm mb-1.5"
                   >
-                    Cant. de personas
+                    Cantidad de personas
                   </label>
                   <input
                     type="number"
