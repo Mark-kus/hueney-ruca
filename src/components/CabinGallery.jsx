@@ -34,8 +34,6 @@ const CabinGallery = ({ type, name }) => {
           fileUrl: fileUrl,
         };
       });
-
-      console.log(fileList);
       return fileList;
     } catch (error) {
       Swal.fire(errorSwal);
