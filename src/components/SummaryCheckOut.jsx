@@ -2,20 +2,22 @@ export default function SummaryCheckOut({ url, name, price, night, extra }) {
   return (
     <>
       <section className="border-2 rounded-3xl border-brand-light-green shadow-lg p-6">
-        <div className="flex pb-8">
-          {url
-            ? <img
+        <div className="flex flex-wrap pb-8 justify-center">
+          {url ? (
+            <img
               src={url}
               alt={name}
               className="rounded-2xl object-cover w-55 h-34"
             />
-            : <img
+          ) : (
+            <img
               src="https://via.placeholder.com/500x500.png?text=Image+Not+Found"
               alt="Cabin image"
               layout="fill"
               objectfit="cover"
               className="border rounded-2xl object-cover w-55 h-34"
-            />}
+            />
+          )}
           <div className="ml-5">
             <h1 className="text-brand-green font-semibold text-3xl">{name}</h1>
             <h2 className="text-black font-bold text-2xl pt-2">
@@ -27,7 +29,9 @@ export default function SummaryCheckOut({ url, name, price, night, extra }) {
         <div className="border-2 border-brand-cream rounded-full"></div>
 
         <div className="pt-6">
-          <h1 className="text-brand-green font-semibold text-xl pb-2">Detalles del precio</h1>
+          <h1 className="text-brand-green font-semibold text-xl pb-2">
+            Detalles del precio
+          </h1>
           <div className="flex justify-between text-lg font-light">
             <p className="text-black pb-2 pt-2">
               ${price} ARS por {night} noches
