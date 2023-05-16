@@ -3,17 +3,24 @@ import Link from "next/link";
 import NavSliders from "components/NavSliders.jsx";
 import Datepicker from "react-tailwindcss-datepicker";
 import { supabase } from "utils/supabase";
+import { useState } from "react";
 
 export default function Room({ room }) {
+    const [value, setValue] = useState({
+        startDate: null,
+        endDate: null,
+    });
+    const handleValueChange = (newValue) => {
+        console.log("newValue:", newValue);
+        setValue(newValue);
+    };
     return (
         <Layout>
             {room.images ? (
                 <NavSliders cabanas={room.images.url} />
             ) : (
                 <div className="h-10 overflow-hidden shadow-lg">
-                    <h1 className="text-center" >
-                        No se cargaron imagenes
-                    </h1>
+                    <h1 className="text-center">No se cargaron imagenes</h1>
                 </div>
             )}
 
@@ -56,16 +63,17 @@ export default function Room({ room }) {
 
                         <ul className="my-5">
                             <h1 className="">Incluye:</h1>
-                            {room.services.map(service => (
-                                <li className="whitespace-pre-wrap text-sm ml-2">
+                            {room.services.map((service, i) => (
+                                <li
+                                    className="whitespace-pre-wrap text-sm ml-2"
+                                    key={`iiii-id-${i}`}
+                                >
                                     <p>-{service}</p>
                                 </li>
                             ))}
                         </ul>
 
-                        <p>
-                            {room.description}
-                        </p>
+                        <p>{room.description}</p>
 
                         <div className="mt-6">
                             <div className="text-sm font-semibold leading-none">
@@ -85,6 +93,9 @@ export default function Room({ room }) {
                                         })}
                                     useRange={false}
                                     asSingle={true}
+                                    value={value}
+                                    onChange={handleValueChange}
+                                    readOnly={true}
                                 ></Datepicker>
                             </div>
                         </div>
