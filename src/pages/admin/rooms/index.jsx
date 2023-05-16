@@ -7,6 +7,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import swalAction from "components/dashboard/swalAction";
 import FilterBarCabanasReal from "components/FilterBarCabanasReal";
+import Pagination from "components/Pagination";
 
 const table_head = [
     { idx: "image", title: "" },
@@ -40,6 +41,11 @@ export default function Dashboard({ rooms }) {
     const [roomList, setRoomList] = useState(rooms);
     const [bookings, setBookings] = useState([]);
     const [filteredCabanas, setFilteredCabanas] = useState([]);
+    const [displayedCabanas, setDisplayedCabanas] = useState([]);
+
+    // useEffect(() => {
+    //     console.log(displayedCabanas);
+    // }, [displayedCabanas]);
 
     useEffect(() => {
         axios
@@ -99,13 +105,13 @@ export default function Dashboard({ rooms }) {
                             <TableHead data={table_head} />
 
                             <tbody>
-                                {filteredCabanas &&
-                                    filteredCabanas.map((room, i) => (
+                                {displayedCabanas &&
+                                    displayedCabanas.map((room, i) => (
                                         <tr key={room.id}>
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${
                                                     i <
-                                                    filteredCabanas.length - 1
+                                                    displayedCabanas.length - 1
                                                         ? "border-b"
                                                         : ""
                                                 }`}
@@ -120,7 +126,7 @@ export default function Dashboard({ rooms }) {
                                             <td
                                                 className={`border-[#eee] py-5 px-4 select-none ${
                                                     i <
-                                                    filteredCabanas.length - 1
+                                                    displayedCabanas.length - 1
                                                         ? "border-b"
                                                         : ""
                                                 }`}
@@ -149,7 +155,7 @@ export default function Dashboard({ rooms }) {
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${
                                                     i <
-                                                    filteredCabanas.length - 1
+                                                    displayedCabanas.length - 1
                                                         ? "border-b"
                                                         : ""
                                                 }`}
@@ -161,7 +167,7 @@ export default function Dashboard({ rooms }) {
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${
                                                     i <
-                                                    filteredCabanas.length - 1
+                                                    displayedCabanas.length - 1
                                                         ? "border-b"
                                                         : ""
                                                 }`}
@@ -184,6 +190,16 @@ export default function Dashboard({ rooms }) {
                                     ))}
                             </tbody>
                         </table>
+
+                        <Pagination
+                            items={
+                                filteredCabanas instanceof Array
+                                    ? filteredCabanas
+                                    : []
+                            }
+                            displayedAmount={8}
+                            setDisplayedItems={setDisplayedCabanas}
+                        />
                     </div>
                 </div>
             </div>
