@@ -19,7 +19,16 @@ export default function Header({ user, actionOpenSidebar }) {
 				const url = URL.createObjectURL(data);
 				setAvatar(url);
 			} catch (error) {
-				Swal.fire('No pudimos cargar tu avatar', '', 'warning')
+				Swal.fire({
+					toast: true,
+					position: 'top-end',
+					timer: 3000,
+					timerProgressBar: true,
+					title: 'No se cargó tu avatar',
+					text: '',
+					icon: 'warning',
+					showConfirmButton: false,
+				});
 			}
 		}
 
