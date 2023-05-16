@@ -66,7 +66,7 @@ export default function Services() {
                       <img
                         src={e.icon}
                         alt={`Icono ${e.title}`}
-                        className="icon h-32 object-cover"
+                        className="icon h-32 object-cover m-auto"
                       />
                     </div>
 
