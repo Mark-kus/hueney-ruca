@@ -45,7 +45,7 @@ export const handlerDelete = async (req, res) => {
 
   try {
     const response = await Controllers.deleteProfile(id);
-    return res.status(200).json({ message: "User successfully removed" });
+    return res.status(200).json(response);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

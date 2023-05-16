@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
 import Swal from "sweetalert2";
 import FilterBarUsers from "components/FilterBarUsers";
+import { getProfileInfoId } from "helpers/dbHelpers";
 
 const table_head = [
     { idx: "name", title: "Nombre", width: "min-w-[220px]" },
@@ -23,6 +24,7 @@ export default function Dashboard() {
     const session = useSession();
     const [bookings, setBookings] = useState([]);
     const [users, setUsers] = useState([]);
+    const [admin, setAdmin] = useState({});
     const [usersFiltered, setUsersFiltered] = useState([]);
 
     useEffect(() => {
@@ -31,7 +33,6 @@ export default function Dashboard() {
             .then((response) => {
                 setUsers(response.data);
                 setUsersFiltered(response.data);
-                console.log(response.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -45,7 +46,11 @@ export default function Dashboard() {
             .catch((error) => {
                 console.log(error);
             });
-    }, []);
+
+        if (session) (async () => {
+            setAdmin(await getProfileInfoId(session.user.id))
+        })()
+    }, [session]);
 
     const totalBookings = (id) => {
         const counter = bookings.filter(
@@ -67,30 +72,35 @@ export default function Dashboard() {
         }
     };
 
-    const deleteHandler = async (e) => {
-        const id = e.target.value;
+    const deleteHandler = async (user) => {
+        const { id, suspended } = user;
         const response = await swalAction(
             "usuario",
             id,
             setUsers,
             users,
-            "profile"
+            "profile",
+            suspended
         );
 
-        if (response) {
+        if (response.realizado) {
             const user = (await axios(`/api/profile/${id}`)).data;
             const username = user.username ? user.username : user.full_name;
             const usermail = user.email;
+            // Ni los caruseles dan tantas vueltas:
+            const accion = response.result ? suspended ?
+                'habilitado nuevamente' : 'suspendido indefinidamente'
+                : 'eliminado permanentemente';
+
             emailjs.send(
                 process.env.NEXT_PUBLIC_EMAIL_SERVICE_ID,
                 process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_GENERIC,
                 {
                     user_name: username,
                     user_email: usermail,
-                    message: `Hola${
-                        username ? ` ${username}` : ""
-                    }, lamentamos informarte que hemos tomado acciones
-          con tu usuario, ahora estas ${response}.`,
+                    message: `Hola${username ? ` ${username}` : ""
+                        }, queremos informarte que hemos tomado acciones
+          con tu usuario, ahora estas ${accion}.`,
                 },
                 process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY
             );
@@ -118,10 +128,8 @@ export default function Dashboard() {
                 const user = data.data[0];
                 Swal.fire(
                     "Nice!",
-                    `Hemos actalizado a ${
-                        user.full_name || user.email
-                    }, ahora es un ${
-                        user.role === 2 ? "administrador" : "usuario"
+                    `Hemos actalizado a ${user.full_name || user.email
+                    }, ahora es un ${user.role === 2 ? "administrador" : "usuario"
                     }.`,
                     "success"
                 );
@@ -180,11 +188,10 @@ export default function Dashboard() {
                                     usersFiltered.map((user, i) => (
                                         <tr key={i}>
                                             <td
-                                                className={`border-[#eee] py-5 px-4 ${
-                                                    i < user.length - 1
+                                                className={`border-[#eee] py-5 px-4 ${i < user.length - 1
                                                         ? "border-b"
                                                         : ""
-                                                }`}
+                                                    }`}
                                             >
                                                 <h5 className="text-black text-sm font-semibold capitalize">
                                                     {user.name
@@ -196,63 +203,60 @@ export default function Dashboard() {
                                                 </p>
                                             </td>
                                             <td
-                                                className={`border-[#eee] py-5 px-4 ${
-                                                    i < user.length - 1
+                                                className={`border-[#eee] py-5 px-4 ${i < user.length - 1
                                                         ? "border-b"
                                                         : ""
-                                                }`}
+                                                    }`}
                                             >
                                                 {/* EL ROL DEL USUARIO */}
                                                 <h5
                                                     className={`text-black text-sm font-semibold capitalize p-2 inline
-                                                    ${
-                                                        user.role < 3
+                                                    ${user.role < 3 && admin.role > 2
                                                             ? `hover:bg-black hover:text-white transition-colors
                                                     hover:cursor-pointer`
                                                             : null
-                                                    }`}
+                                                        }`}
                                                     onClick={() => {
-                                                        roleChange(
-                                                            user.id,
-                                                            user.role
-                                                        );
+                                                        if (admin.rol > 2) {
+                                                            roleChange(
+                                                                user.id,
+                                                                user.role
+                                                            );
+                                                        }
                                                     }}
                                                 >
                                                     {user.role === 3
                                                         ? "SuperAdmin"
                                                         : user.role === 2
-                                                        ? "Admin"
-                                                        : "User"}
+                                                            ? "Admin"
+                                                            : "User"}
                                                 </h5>
                                             </td>
                                             <td
-                                                className={`border-[#eee] py-5 px-4 ${
-                                                    i < user.length - 1
+                                                className={`border-[#eee] py-5 px-4 ${i < user.length - 1
                                                         ? "border-b"
                                                         : ""
-                                                }`}
+                                                    }`}
                                             >
                                                 <p className="text-sm font-medium">
                                                     {totalBookings(user.id)}
                                                 </p>
                                             </td>
                                             <td
-                                                className={`border-[#eee] py-5 px-4 ${
-                                                    i < user.length - 1
+                                                className={`border-[#eee] py-5 px-4 ${i < user.length - 1
                                                         ? "border-b"
                                                         : ""
-                                                }`}
+                                                    }`}
                                             >
                                                 <p className="text-sm font-medium">
                                                     {lastBooking(user.id)}
                                                 </p>
                                             </td>
                                             <td
-                                                className={`border-[#eee] py-5 px-4 ${
-                                                    i < user.length - 1
+                                                className={`border-[#eee] py-5 px-4 ${i < user.length - 1
                                                         ? "border-b"
                                                         : ""
-                                                }`}
+                                                    }`}
                                             >
                                                 <div className="flex items-center space-x-3.5">
                                                     <Link
@@ -263,8 +267,7 @@ export default function Dashboard() {
                                                     </Link>
                                                     <button
                                                         className="hover:text-primary ri-close-circle-line text-xl leading-none"
-                                                        onClick={deleteHandler}
-                                                        value={user.id}
+                                                        onClick={() => deleteHandler(user)}
                                                     ></button>
                                                 </div>
                                             </td>
