@@ -9,6 +9,7 @@ import Layout from "../../../layouts/DashboardLayout";
 import Header from "../../../components/dashboard/PageHeader";
 import TableHead from "../../../components/dashboard/tables/TableHead";
 import FilterBarCabanas from "components/FilterBarCabanas";
+import Pagination from "components/Pagination";
 
 const table_head = [
     { idx: "date", title: "Fecha", width: "min-w-[220px]" },
@@ -28,6 +29,7 @@ export default function Dashboard() {
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filteredBookings, setFilteredBookings] = useState([]);
+    const [displayedBookings, setDisplayedBookings] = useState([]);
 
     useEffect(() => {
         axios
@@ -117,13 +119,13 @@ export default function Dashboard() {
                             <TableHead data={table_head} />
 
                             <tbody>
-                                {filteredBookings &&
-                                    filteredBookings.map((booking, i) => (
+                                {displayedBookings &&
+                                    displayedBookings.map((booking, i) => (
                                         <tr key={booking.id}>
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${
                                                     i <
-                                                    filteredBookings.length - 1
+                                                    displayedBookings.length - 1
                                                         ? "border-b"
                                                         : ""
                                                 }`}
@@ -137,7 +139,7 @@ export default function Dashboard() {
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${
                                                     i <
-                                                    filteredBookings.length - 1
+                                                    displayedBookings.length - 1
                                                         ? "border-b"
                                                         : ""
                                                 }`}
@@ -159,7 +161,7 @@ export default function Dashboard() {
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${
                                                     i <
-                                                    filteredBookings.length - 1
+                                                    displayedBookings.length - 1
                                                         ? "border-b"
                                                         : ""
                                                 }`}
@@ -173,7 +175,7 @@ export default function Dashboard() {
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${
                                                     i <
-                                                    filteredBookings.length - 1
+                                                    displayedBookings.length - 1
                                                         ? "border-b"
                                                         : ""
                                                 }`}
@@ -187,7 +189,7 @@ export default function Dashboard() {
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${
                                                     i <
-                                                    filteredBookings.length - 1
+                                                    displayedBookings.length - 1
                                                         ? "border-b"
                                                         : ""
                                                 }`}
@@ -219,6 +221,15 @@ export default function Dashboard() {
                                     ))}
                             </tbody>
                         </table>
+                        <Pagination
+                            items={
+                                filteredBookings instanceof Array
+                                    ? filteredBookings
+                                    : []
+                            }
+                            displayedAmount={8}
+                            setDisplayedItems={setDisplayedBookings}
+                        />
                     </div>
                 </div>
             </div>
