@@ -49,7 +49,7 @@ export const updateComment = async (form, id, suspend) => {
     }
     return updateComments;
   } else {
-    const comment = await getCommentById(queryId);
+    const comment = await getCommentById(id);
     const { data: upComment, error } = await supabase
       .from("comments")
       .update({ suspended: !comment.suspended })
