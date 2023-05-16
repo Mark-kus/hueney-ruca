@@ -132,6 +132,7 @@ export default function ContactForm() {
                 onChange={handleChange}
                 onFocus={inputFocus}
                 onBlur={inputBlur}
+                required
               />
               {errors.user_name && (
                 <div className="error">{errors.user_name}</div>
@@ -156,6 +157,7 @@ export default function ContactForm() {
                 onChange={handleChange}
                 onFocus={inputFocus}
                 onBlur={inputBlur}
+                required
               />
               {errors.user_email && (
                 <div className="error">{errors.user_email}</div>
@@ -178,6 +180,7 @@ export default function ContactForm() {
                 onChange={handleChange}
                 onFocus={inputFocus}
                 onBlur={inputBlur}
+                required
               />
               {errors.message && <div className="error">{errors.message}</div>}
               <span className="bigdot bg-brand-green w-[800px] h-[800px] left-[-200px] top-[-400px] absolute rounded-full pointer-events-none"></span>
