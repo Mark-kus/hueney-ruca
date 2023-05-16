@@ -54,9 +54,8 @@ export default function Reservas() {
                       !booking.suspended,
                     ].every(Boolean);
                     return (
-                      <div className="p-1">
+                      <div key={i} className="p-1">
                         <li
-                          key={i}
                           className={`${cls} p-4 flex justify-between items-center border rounded-xl`}
                         >
                           <h2 className="text-brand-light-green font-semibold flex flex-col lg:flex-row">
