@@ -56,18 +56,23 @@ export default function Dashboard() {
     };
 
     const deleteHandler = async (booking) => {
+        const { id, suspended } = booking;
         const response = await swalAction(
             "reserva",
-            booking.id,
+            id,
             setBookings,
             bookings,
-            "booking"
+            "booking",
+            suspended
         );
 
-        if (response) {
+        if (response.realizado) {
             const user = (await axios(`/api/profile/${booking.user_id}`)).data;
             const username = user.username ? user.username : user.full_name;
             const usermail = user.email;
+            const accion = response.result ? suspended ?
+            'habilitado nuevamente' : 'suspendido indefinidamente'
+            : 'eliminado permanentemente';
             emailjs.send(
                 process.env.NEXT_PUBLIC_EMAIL_SERVICE_ID,
                 process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_GENERIC,
@@ -77,7 +82,7 @@ export default function Dashboard() {
                     message: `Hola${
                         username ? ` ${username}` : ""
                     }, nos urge informarte que hemos tomado acciones
-          sobre la reserva que has hecho, ahora está ${response}. Puedes ponerte en contacto con hueneyruca@gmail.com
+          sobre la reserva que has hecho, ahora está ${accion}. Puedes ponerte en contacto con hueneyruca@gmail.com
           para más información.`,
                 },
                 process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY

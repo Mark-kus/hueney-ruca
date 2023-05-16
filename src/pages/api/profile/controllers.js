@@ -42,7 +42,7 @@ export const updateProfile = async (form, id, suspend) => {
     if (error) {
       throw error;
     }
-    return 'suspendido indefinidamente';
+    return true;
   }
 };
 
@@ -54,7 +54,7 @@ export async function deleteProfile(id) {
   if (error) {
     throw error;
   }
-  return 'eliminado permanentemente';
+  return false;
 }
 
 export async function getProfileBookings(userId) {
