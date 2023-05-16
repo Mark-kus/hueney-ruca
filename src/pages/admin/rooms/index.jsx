@@ -69,9 +69,16 @@ export default function Dashboard({ rooms }) {
         return counter;
     };
 
-    const deleteHandler = async (e) => {
-        swalAction("cabaña", e.target.value, setRoomList, roomList, "cabanas");
-    };
+  const deleteHandler = async (room) => {
+    swalAction(
+      'cabaña',
+      room.id,
+      setRoomList,
+      roomList,
+			'cabanas',
+      room.suspended,
+    );
+  };
 
     return (
         <Layout>
@@ -180,9 +187,8 @@ export default function Dashboard({ rooms }) {
                                                         <i className="ri-edit-line text-xl leading-none"></i>
                                                     </Link>
                                                     <button
-                                                        onClick={deleteHandler}
+                                                        onClick={() => deleteHandler(room)}
                                                         className="hover:text-primary ri-close-circle-line text-xl leading-none"
-                                                        value={room.id}
                                                     ></button>
                                                 </div>
                                             </td>

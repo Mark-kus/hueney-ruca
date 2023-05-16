@@ -104,7 +104,7 @@ export const updateBooking = async (
         if (error) {
             throw error;
         }
-        return "suspendida permanentemente";
+        return true;
     }
 };
 
@@ -117,7 +117,7 @@ export async function deleteBooking(id) {
     if (error) {
         throw error;
     }
-    return "eliminada permanentemente";
+    return false;
 }
 
 export async function paymentVerification(bookingId, sessionId) {

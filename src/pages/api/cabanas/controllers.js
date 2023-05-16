@@ -117,7 +117,7 @@ export const upRoom = async (id, form_data, suspend) => {
     if (error) {
       throw error;
     }
-    return upRoom;
+    return true;
   }
 };
 
@@ -131,5 +131,5 @@ export const deleteRoom = async (id) => {
   if (error) {
     throw error;
   }
-  return delRoom;
+  return false;
 };

@@ -30,8 +30,8 @@ export default function Dashboard() {
       });
   }, []);
 
-  const deleteHandler = (e) => {
-    swalAction("comentario", e.target.value, setReviews, reviews, "comments");
+  const deleteHandler = (comment) => {
+    swalAction("comentario", comment.id, setReviews, reviews, "comments", comment.suspended);
   };
 
   return (
@@ -147,8 +147,7 @@ export default function Dashboard() {
                           </Link>
                           <button
                             className="hover:text-primary ri-close-circle-line text-xl leading-none"
-                            onClick={deleteHandler}
-                            value={review.id}
+                            onClick={() => deleteHandler(review)}
                           ></button>
                         </div>
                       </td>
