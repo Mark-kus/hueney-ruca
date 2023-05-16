@@ -22,22 +22,26 @@ export default function CheckOutForm({
     const session = useSession();
     const [showAlert, setShowAlert] = useState(false);
     const [error, setError] = useState("none");
+    const [disableButton, setdisableButton] = useState(false);
 
     const clickHandler = async () => {
-        if (filters.checkin === null || filters.checkout === null) {
+        setdisableButton(true);
+    if (filters.checkin === null || filters.checkout === null) {
             setError("Faltan registrar fechas");
             setShowAlert(true);
             setTimeout(() => {
                 setShowAlert(false);
+                setdisableButton(false);
             }, 2000);
             return;
         }
         if (filters.checkin == filters.checkout) {
-            setError("Fechas Invalidas");
+            setError("Minimo 1 noche");
             setShowAlert(true);
             setTimeout(() => {
                 setShowAlert(false);
-            }, 2000);
+                setdisableButton(false);
+      }, 2000);
             return;
         }
         const bodyData = {
@@ -63,6 +67,7 @@ export default function CheckOutForm({
             setShowAlert(true);
             setTimeout(() => {
                 setShowAlert(false);
+                setdisableButton(false);
             }, 2000);
             return;
         }
@@ -112,7 +117,7 @@ export default function CheckOutForm({
 
                     <div className="pt-4 pb-6 w-full">
                         <p className="text-lg text-black font-base pb-0.5">
-                            Cant. personas
+                            Cantidad de personas
                         </p>
                         <div className="border-2 rounded-xl border-brand-light-green p-1">
                             <GuestsSelector
@@ -133,7 +138,7 @@ export default function CheckOutForm({
                             onClick={clickHandler}
                             type="submit"
                             role="link"
-                            disabled={showAlert}
+                            disabled={showAlert || disableButton}
                         >
                             {showAlert ? error : "Reservar"}
                         </button>

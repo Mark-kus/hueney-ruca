@@ -4,11 +4,16 @@ import Layout from "layouts/Layout";
 import Link from "next/link";
 import Login from "pages/login";
 import Opinion from "components/Opinion.jsx";
+import emailjs from '@emailjs/browser';
 import { useEffect, useState } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
+import { getProfileInfoId } from "helpers/dbHelpers";
+import Swal from "sweetalert2";
 
 export default function Reservas() {
+  const [user, setUser] = useState({});
   const [bookings, setBookings] = useState([]);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
   const [toggle, setToggle] = useState(true);
   const session = useSession();
 
@@ -19,14 +24,42 @@ export default function Reservas() {
       }
       const response = await axios(`/api/profile/${session.user.id}/bookings`);
       setBookings(response.data);
+      setUser(await getProfileInfoId(session.user.id))
     };
     getUserBookings();
   }, [session]);
 
+  const sendEmail = async () => {
+    setButtonDisabled(true);
+    const username = user.username || user.full_name || user.email.slice(0, user.email.indexOf('@'));
+    // envío de email, message es lo que va dentro de él
+    emailjs.send(
+      process.env.NEXT_PUBLIC_EMAIL_SERVICE_ID,
+      process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_GENERIC,
+      {
+        user_name: username,
+        user_email: user.email,
+        message: `Hola ${username}, gracias por elegirnos para unas vacaciones! 
+            Ya casi está todo listo, solo faltas vos! Junto a este mail
+            te compartimos la información de la reserva que hiciste. Te esperamos!`,
+      },
+      process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY
+    )
+      .then(response => {
+        Swal.fire('Ya te enviamos un email con la información pedida', '', 'success')
+        setButtonDisabled(false);
+      })
+      .catch(error => {
+        Swal.fire('Hubo un error al enviarte los datos', 'Intenta de nuevo más tarde', 'error')
+        setButtonDisabled(false);
+      });
+  }
+
   const handleDownload = (e) => {
     e.preventDefault();
-    // Descarga de comprobante
+    sendEmail();
   };
+
   return (
     <>
       {session ? (
@@ -75,16 +108,15 @@ export default function Reservas() {
                             Suspendido: {booking.suspended ? "✅" : "❌"}
                           </p>
                           <div className="flex items-center">
-                            <a
+                            <button
+                              disabled={buttonDisabled}
                               onClick={handleDownload}
                               className="hover:text-primary ri-file-text-line text-xl leading-none"
-                              href="/"
-                            ></a>
+                            ></button>
                             <Link
                               href={`/cabanas/${booking.rooms.id}`}
-                              className={`btn-yellow ${
-                                hasPassed ? "mx-2" : "ml-2"
-                              }`}
+                              className={`btn-yellow ${hasPassed ? "mx-2" : "ml-2"
+                                }`}
                             >
                               Ver cabaña
                             </Link>
