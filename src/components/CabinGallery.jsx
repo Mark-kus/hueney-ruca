@@ -5,9 +5,12 @@ import Swal from "sweetalert2";
 const CabinGallery = ({ type, name }) => {
   const urlBucket =
     "https://kwmjganrkoyleqdillhu.supabase.co/storage/v1/object/public/cabanas_gallery";
-    const newName = name && name.startsWith("Cabaña ") ? name.replace("Cabaña ", "") : name;
+  const newName =
+    name && name.startsWith("Cabaña ") ? name.replace("Cabaña ", "") : name;
+
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [imageDeleted, setImageDeleted] = useState(false);
 
   // console.log(files);
 
@@ -32,6 +35,7 @@ const CabinGallery = ({ type, name }) => {
         };
       });
 
+      console.log(fileList);
       return fileList;
     } catch (error) {
       Swal.fire(errorSwal);
@@ -42,20 +46,39 @@ const CabinGallery = ({ type, name }) => {
   };
 
   const handleDelete = async (file) => {
-    const { data, error } = await supabase.storage
-      .from("cabanas_gallery")
-      .remove(`${type}/${newName}/${file.name}`);
+    setImageDeleted(true);
+    Swal.fire({
+      title: "¿Desea eliminar esta imagen para siempre?",
+      text: "Ya no se podrá recuperar una vez confirmado",
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Sí, eliminar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { data, error } = await supabase.storage
+          .from("cabanas_gallery")
+          .remove(`${type}/${newName}/${file.name}`);
 
-    if (error) {
-      console.error(error);
-      Swal.fire(error.message);
-      return;
-    }
+        if (error) {
+          console.error(error);
+          Swal.fire({
+            title: "Error!",
+            text: error.message,
+            icon: "warning",
+          });
+          return;
+        }
 
-    const newFiles = files.filter((f) => f.name !== file.name);
-    setFiles(newFiles);
+        const newFiles = files.filter((f) => f.name !== file.name);
+        setFiles(newFiles);
 
-    Swal.fire("Se elimino la imagen");
+        Swal.fire({
+          title: "Se eliminó la imagen correctamente",
+          icon: "success",
+        });
+      }
+    });
   };
 
   useEffect(() => {
@@ -96,50 +119,59 @@ const CabinGallery = ({ type, name }) => {
       if (error) {
         throw new Error(error.message);
       }
-
-      Swal.fire("Imágenes guardadas exitosamente");
+      Swal.fire({
+        title: "Imágenes guardadas correctamente",
+        icon: "success",
+      });
     } catch (error) {
       console.error(error);
-      Swal.fire(error.message);
-    }finally {
+      Swal.fire({
+        title: "Error",
+        text: error.message,
+        icon: "warning",
+      });
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-xl flex flex-col items-center">
+    <div className="max-w-xl">
+      <h1 className="text-2xl font-bold mb-4">Imagenes de la cabaña {name}:</h1>
       {files.length > 1 ? (
         <>
           <div className="flex flex-wrap">
             {files.map((file, index) => (
-              <div key={index} className="p-2 w-1/2 md:w-1/3">
+              <div key={index} className="w-1/4 p-2">
                 <img
                   src={`${urlBucket}/${type}/${newName}/${file.name}`}
                   alt={file.name}
-                  className="w-full h-20 md:h-14 object-cover rounded-t-lg shadow-sm"
+                  className="max-w-full rounded-md shadow-sm"
                   width="100px"
                   height="100px"
                 />
+                <p>{file.name}</p>
                 <button
                   onClick={() => handleDelete(file)}
-                  className="bg-red-500 w-full text-white rounded-b-lg hover:bg-red-300
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  className="px-1 py-0.5 bg-red-500 text-white rounded-md hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                 >
                   Eliminar
                 </button>
               </div>
             ))}
           </div>
-          {/* <button
-            className=" px-1 py-0.5 bg-blue-400 text-white rounded-md"
-            onClick={handleSaveChanges}
-            disabled={loading}
-          >
-            {loading ? "Guardando..." : "Guardar cambios"}
-          </button> */}
+          {imageDeleted && (
+            <button
+              className=" px-1 py-0.5 bg-blue-400 text-white rounded-md"
+              onClick={handleSaveChanges}
+              disabled={loading}
+            >
+              {loading ? "Guardando..." : "Guardar cambios"}
+            </button>
+          )}
         </>
       ) : (
-        <p>No hay imágenes en esta cabaña</p>
+        <p>No hay imágenes en este bucket</p>
       )}
     </div>
   );
