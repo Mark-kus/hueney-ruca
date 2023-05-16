@@ -51,7 +51,7 @@ export default function Sidebar(props) {
 						<Link
 							className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
 							href="/cabanas">
-							Back to page
+							Página principal
 						</Link>
 						<h3
 							className="my-4 ml-4 text-sm font-medium text-bodydark2">
@@ -65,7 +65,7 @@ export default function Sidebar(props) {
 									className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
 									href="/admin">
 									<i className="ri-dashboard-line"></i>
-									Dashboard
+									Estadisticas
 								</Link>
 							</li>
 
