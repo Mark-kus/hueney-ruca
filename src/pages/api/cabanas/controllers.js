@@ -1,6 +1,7 @@
 import { supabase } from "utils/supabase";
 import { filterRoomsByCapacity, filterRoomsByDates } from "helpers/filters";
 
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 //GET
 
 export const getAllRooms = async (query) => {
@@ -38,6 +39,33 @@ export const getRoomById = async (id) => {
 
 //POST
 export const postRoom = async (form_data) => {
+  //console.log(form_data);
+  //creacion en stripe
+  const newCabana = await stripe.products.create({
+    name: form_data.name,
+    description: form_data.description,
+    metadata: {
+      type: form_data.type,
+      rooms: form_data.rooms,
+      capacity: form_data.capacity,
+      beds: form_data.beds,
+      price_metadata: form_data.price,
+    },
+  });
+  //Creacion del precio
+  const newCabanaPrice = await stripe.prices.create({
+    product: newCabana.id,
+    unit_amount: parseInt(form_data.price) * 100,
+    currency: "ars",
+  });
+  ////////////
+  const insertPrice = await stripe.products.update(newCabana.id, {
+    default_price: newCabanaPrice.id,
+  });
+
+  ////////////
+  form_data.stripe_product_id = newCabana.id;
+  //Creacion en base de datos
   const { data: postRoom, error } = await supabase
     .from("rooms")
     .insert([form_data])
@@ -50,17 +78,34 @@ export const postRoom = async (form_data) => {
 };
 
 //UPDATE
-export const upRoom = async (form, id, suspend) => {
+export const upRoom = async (id, form_data, suspend) => {
   if (suspend === undefined) {
-    //console.log(form);
+    //Update en base de datos
     const { data: upRoom, error } = await supabase
       .from("rooms")
-      .update(form)
+      .update(form_data)
       .eq("id", id)
-      .select();
+      .select(`*`)
+      .single();
     if (error) {
       throw error;
-    }
+    } //Update en stripe
+    const productToUpdate = await stripe.products.retrieve(
+      upRoom.stripe_product_id
+    );
+    const oldPriceId = productToUpdate.default_price;
+    const newPrice = await stripe.prices.create({
+      product: upRoom.stripe_product_id,
+      unit_amount: parseInt(form_data.price) * 100,
+      currency: "ars",
+    });
+    const updatePrice = await stripe.products.update(upRoom.stripe_product_id, {
+      default_price: newPrice.id,
+    });
+    const oldPrinceUpdate = await stripe.prices.update(oldPriceId, {
+      active: false,
+    });
+
     return upRoom;
   } else {
     const room = await getRoomById(id);

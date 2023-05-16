@@ -4,6 +4,9 @@ import Services from "../../../helpers/services";
 import BtnSubmit from "./BtnSubmit";
 import Preload from "../PreloadSmall";
 import axios from "axios";
+import Swal from "sweetalert2";
+import CabinBuckets from "components/CabinBuckets";
+import CabinGallery from "components/CabinGallery";
 
 export default function RoomForm({ room }) {
   const types = ["A", "B", "C"];
@@ -111,32 +114,58 @@ export default function RoomForm({ room }) {
     e.preventDefault();
     if (Object.values(errors).some((error) => error !== null)) {
       // Si hay un error, se evita hacer el submit y tira un alert vintage
-      throw alert("Es necesario corregir los errores");
+      Swal.fire("Debes correjir los errores", "", "warning");
+      return;
     }
     setStatus(true);
 
+    setStatus(true);
     if (room?.id) {
-      //console.log(form);
-      //console.log(room.id);
       axios
-        .put(`/api/cabanas/${room.id}`, form)
+        .put("/api/cabanas", { form, idRoom: room.id })
         .then((resp) => {
-          //console.log(resp.data);
-          alert("UHU! Hemos actualizado los datos de la cabaña");
+          // console.log(resp.data)
+          Swal.fire("Yuju!", "Actualizamos exitosamente tu cabaña", "success");
           router.push("/admin/rooms");
         })
-        .catch((err) => console.log("Error", err));
+        .catch((err) => {
+          console.log("Error", err);
+          Swal.fire(
+            "Ohoh :(",
+            "Hubo un error al actualizar tu cabaña, intenta más tarde",
+            "error"
+          );
+          setStatus(false);
+        });
     } else {
       axios
         .post("/api/cabanas", form)
         .then((resp) => {
           // console.log(resp.data)
-          alert("WOHA! la nueva cabaña que creaste ya está lista");
+          Swal.fire("Whoa!", "Tu nueva cabaña ya está lista", "success");
           router.push("/admin/rooms");
         })
-        .catch((err) => console.log("Error", err));
+        .catch((err) => {
+          console.log("Error", err);
+          Swal.fire(
+            "Ohoh :(",
+            "Hubo un error al crear tu cabaña, intenta más tarde",
+            "error"
+          );
+          setStatus(false);
+        });
     }
   };
+
+  const [mostrarGallery, setMostrarGallery] = useState(false);
+  const buttonTextGallery = mostrarGallery
+    ? `Ocultar imágenes de ${room?.name}`
+    : `Mostrar imágenes de ${room?.name}`;
+
+  const [mostrarBucket, setMostrarBucket] = useState(false);
+  const buttonTextBucket = mostrarBucket
+    ? "No agregar imágenes"
+    : "Agregar imágenes";
 
   return (
     <div className={status ? "" : ""}>
@@ -410,9 +439,37 @@ export default function RoomForm({ room }) {
 
         {/* NOTA: Falta implementar el file upload */}
         <div className="col-span-5 xl:col-span-2">
-          <div className="rounded-sm border border-stroke bg-white shadow-default">
+          <div>
+            {/* <button
+              onClick={() => setMostrarBucket(!mostrarBucket)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-5 rounded"
+              >
+              {buttonTextBucket}
+            </button> */}
+            {/* {mostrarBucket && ( */}
+            <CabinBuckets
+              type={room?.type}
+              name={room?.name}
+              className="mt-4"
+            />
+            {/* )} */}
+          </div>
+
+          <div className="flex flex-col w-2/3 items-center m-auto my-2">
+            <button
+              onClick={() => setMostrarGallery(!mostrarGallery)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              {buttonTextGallery}
+            </button>
+            {mostrarGallery && (
+              <CabinGallery type={room?.type} name={room?.name} className="" />
+            )}
+          </div>
+
+          {/* <div className="rounded-sm border border-stroke bg-white shadow-default">
             <div className="p-7">
-              <form action="#">
+               <form action="#">
                 <div
                   id="FileUpload"
                   className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded border-2 border-dashed border-primary bg-gray py-4 px-4 dark:bg-meta-4 sm:py-7.5"
@@ -478,9 +535,9 @@ export default function RoomForm({ room }) {
                     Save
                   </button>
                 </div>
-              </form>
+              </form> 
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

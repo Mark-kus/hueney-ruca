@@ -2,32 +2,43 @@ import { useState, useEffect } from "react";
 import { supabase } from "utils/supabase";
 import Swal from "sweetalert2";
 
-const CabinGallery = ({ type = "A", name = "Cabaña A3" }) => {
+const CabinGallery = ({ type, name }) => {
   const urlBucket =
     "https://kwmjganrkoyleqdillhu.supabase.co/storage/v1/object/public/cabanas_gallery";
-  const newName = name.replace("Cabaña ", "");
+    const newName = name && name.startsWith("Cabaña ") ? name.replace("Cabaña ", "") : name;
   const [files, setFiles] = useState([]);
-  console.log(files);
+  const [loading, setLoading] = useState(true);
+
+  // console.log(files);
 
   const listFiles = async () => {
-    const { data: files, error } = await supabase.storage
-      .from("cabanas_gallery")
-      .list(`${type}/${newName}`);
+    try {
+      setLoading(true);
 
-    if (error) {
-      console.error(error);
-      return [];
+      const { data: files, error } = await supabase.storage
+        .from("cabanas_gallery")
+        .list(`${type}/${newName}`);
+
+      if (error) {
+        console.error(error);
+        return [];
+      }
+
+      const fileList = files.map((file) => {
+        const fileUrl = `${urlBucket}/${type}/${newName}/${file.name}`;
+        return {
+          name: file.name,
+          fileUrl: fileUrl,
+        };
+      });
+
+      return fileList;
+    } catch (error) {
+      Swal.fire(errorSwal);
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-
-    const fileList = files.map((file) => {
-      const fileUrl = `${urlBucket}/${type}/${newName}/${file.name}`;
-      return {
-        name: file.name,
-        fileUrl: fileUrl,
-      };
-    });
-
-    return fileList;
   };
 
   const handleDelete = async (file) => {
@@ -57,6 +68,8 @@ const CabinGallery = ({ type = "A", name = "Cabaña A3" }) => {
 
   const handleSaveChanges = async () => {
     try {
+      setLoading(true);
+
       const { data: existingData, error: existingError } = await supabase
         .from("images")
         .select()
@@ -88,43 +101,45 @@ const CabinGallery = ({ type = "A", name = "Cabaña A3" }) => {
     } catch (error) {
       console.error(error);
       Swal.fire(error.message);
+    }finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-xl">
-      <h1 className="text-2xl font-bold mb-4">Imagenes de la cabaña {name}:</h1>
+    <div className="max-w-xl flex flex-col items-center">
       {files.length > 1 ? (
         <>
           <div className="flex flex-wrap">
-            {files.slice(1).map((file, index) => (
-              <div key={index} className="w-1/4 p-2">
+            {files.map((file, index) => (
+              <div key={index} className="p-2 w-1/2 md:w-1/3">
                 <img
                   src={`${urlBucket}/${type}/${newName}/${file.name}`}
                   alt={file.name}
-                  className="max-w-full rounded-md shadow-sm"
+                  className="w-full h-20 md:h-14 object-cover rounded-t-lg shadow-sm"
                   width="100px"
                   height="100px"
                 />
-                <p>{file.name}</p>
                 <button
                   onClick={() => handleDelete(file)}
-                  className="px-1 py-0.5 bg-red-500 text-white rounded-md hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  className="bg-red-500 w-full text-white rounded-b-lg hover:bg-red-300
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                 >
                   Eliminar
                 </button>
               </div>
             ))}
           </div>
-          <button
+          {/* <button
             className=" px-1 py-0.5 bg-blue-400 text-white rounded-md"
             onClick={handleSaveChanges}
+            disabled={loading}
           >
-            Guardar cambios
-          </button>
+            {loading ? "Guardando..." : "Guardar cambios"}
+          </button> */}
         </>
       ) : (
-        <p>No hay imágenes en este bucket</p>
+        <p>No hay imágenes en esta cabaña</p>
       )}
     </div>
   );

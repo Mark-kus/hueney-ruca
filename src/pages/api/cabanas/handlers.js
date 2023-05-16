@@ -30,12 +30,14 @@ export async function handlerPost(req, res) {
 }
 
 export async function handlerPut(req, res) {
-  const form = req.body;
+  const { form, idRoom } = req.body;
   const { id, suspend } = req.query;
   try {
-    //console.log(id);
-    //console.log(form);
-    const updateRoom = await Controllers.upRoom(form, id, suspend);
+    const updateRoom = await Controllers.upRoom(
+      id === undefined ? idRoom : id,
+      form,
+      suspend
+    );
     return res.status(200).json(updateRoom);
   } catch (error) {
     return res.status(404).json({ error: error.message });

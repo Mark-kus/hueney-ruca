@@ -1,20 +1,40 @@
-import { useState } from 'react'
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import { supabase } from "utils/supabase";
 
-
-export default function Header()
-{
-
+export default function Header({ user, actionOpenSidebar }) {
+	const [avatar, setAvatar] = useState();
 	const [sidebarToggle, setSidebarToggle] = useState(false)
+	const openSidebar = () => actionOpenSidebar()
+
+	useEffect(() => {
+		async function downloadImage(path) {
+			try {
+				const { data, error } = await supabase.storage
+					.from("avatars")
+					.download(path);
+				if (error) {
+					throw error;
+				}
+				const url = URL.createObjectURL(data);
+				setAvatar(url);
+			} catch (error) {
+				Swal.fire('No pudimos cargar tu avatar', '', 'warning')
+			}
+		}
+
+		downloadImage(user.avatar_url)
+	}, []);
 
 	return (
 		<header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1">
 			<div className="flex flex-grow items-center justify-between py-4 px-4 shadow-2 md:px-6 2xl:px-11">
 				<div className="flex items-center gap-2 sm:gap-4 lg:hidden">
-					
+
 					{/* Hamburger Toggle BTN */}
 					<button
 						className="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm lg:hidden"
-						onClick={() => setSidebarToggle(!sidebarToggle)}>
+						onClick={openSidebar}>
 						<span className="relative block h-5.5 w-5.5 cursor-pointer">
 							<span className="du-block absolute right-0 h-full w-full">
 								<span
@@ -57,11 +77,11 @@ export default function Header()
 				</div>
 
 				<div className="hidden sm:block"></div>
-				
+
 				<div className="flex items-center gap-3 2xsm:gap-7">
 					<ul className="flex items-center gap-2 2xsm:gap-4">
 
-				{/* 
+						{/* 
 					************************
 					************************
 					Esta sección por el momento la dejamos comentada
@@ -146,25 +166,31 @@ export default function Header()
 						</li>
 						<!-- Notification Menu Area -->
 					*/}
-					
+
 					</ul>
 
 					{/* User Area */}
 					<div className="relative">
 						<div className="flex items-center gap-4 select-none">
 							<span className="hidden text-right lg:block">
-								<span className="block text-sm font-medium text-black">Juan Pérez</span>
-								<span className="block text-xs font-medium">Administrador</span>
+								<span className="block text-sm font-medium text-black">
+									{user.username ? user.username : user.full_name ? user.full_name : user.email}
+								</span>
+								<span className="block text-xs font-medium">
+									{user.role == 2 ? 'Admin' : 'SuperAdmin'}
+								</span>
 							</span>
 
 							<span className="rounded-full">
-								<span className="bg-primary text-white grid place-content-center w-10 h-10 rounded-full">JP</span>
+								<img
+									src={avatar}
+									className="bg-primary text-white grid place-content-center w-10 h-10 rounded-full" />
 							</span>
 						</div>
 					</div>
 					{/* User Area */}
 				</div>
-			</div> 
-		</header>
+			</div>
+		</header >
 	)
 }

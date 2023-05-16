@@ -16,7 +16,7 @@ const Login = () => {
             {!session ? (
               <Auth
                 redirectTo="/"
-                providers={["github", "google", "facebook"]}
+                providers={["github", "google"]}
                 supabaseClient={supabase}
                 appearance={{
                   theme: ThemeSupa,

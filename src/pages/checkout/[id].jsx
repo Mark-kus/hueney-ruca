@@ -6,17 +6,26 @@ import { supabase } from "utils/supabase";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import SummaryCheckOut from "components/SummaryCheckOut";
+import { addDays, diffDays } from "helpers/dateProcessing";
+import SkeletonCheckOutForm from "components/SkeletonCheckOutForm";
+import SkeletonSummaryCheck from "components/SkeletonSummaryCheck";
 
-export default function CheckOut({ room }) {
+export default function CheckOut({ room, url }) {
   const session = useSession();
-  const [products, setProducts] = useState([]);
-  const [matchingProduct, setMatchingProduct] = useState(null);
 
+  const [matchingProduct, setMatchingProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  //QUEDA DEFINIR SI USAREMOS COSAS COMO EXTRAS O DESCUENTOS
   const mock = {
-    price: 19,
-    night: 7,
     extra: 20,
   };
+
+  const [filters, setFilters] = useState({
+    checkin: null,
+    checkout: null,
+    adults: 2,
+    children: 0,
+  });
 
   useEffect(() => {
     async function fetchProducts() {
@@ -24,9 +33,8 @@ export default function CheckOut({ room }) {
       const matching = response.data.find(
         (product) => product.name === room.name
       );
-      setProducts(response.data);
       setMatchingProduct(matching);
-      // Products no se está usando, si no se va a usar eliminarlo
+      setLoading(false);
     }
     fetchProducts();
   }, []);
@@ -47,23 +55,41 @@ export default function CheckOut({ room }) {
             </h1>
           </div>
           <div className="flex flex-col pt-4 pb-18 pl-4 pr-4 md:pl-20 md:pr-20 items-center md:flex-row md:justify-between">
-            {matchingProduct && matchingProduct.name === room.name && (
-              <CheckOutForm
-                roomId={room.id}
-                name={matchingProduct.name}
-                price={matchingProduct.price}
-                default_price={matchingProduct.default_price}
-                night={mock.night}
-                extra={mock.extra}
-              />
+            {loading ? (
+              <>
+                <SkeletonCheckOutForm />
+                <SkeletonSummaryCheck />
+              </>
+            ) : (
+              matchingProduct &&
+              matchingProduct.name === room.name && (
+                <>
+                  <CheckOutForm
+                    filters={filters}
+                    setFilters={setFilters}
+                    room={room}
+                    name={matchingProduct.name}
+                    price={matchingProduct.price}
+                    default_price={matchingProduct.default_price}
+                    night={diffDays(
+                      new Date(filters.checkin),
+                      new Date(filters.checkout)
+                    )}
+                    extra={mock.extra}
+                  />
+                  <SummaryCheckOut
+                    url={url}
+                    name={room.name}
+                    price={room.price}
+                    night={diffDays(
+                      new Date(filters.checkin),
+                      new Date(filters.checkout)
+                    )}
+                    extra={mock.extra}
+                  />
+                </>
+              )
             )}
-
-            <SummaryCheckOut
-              name={room.name}
-              price={room.price}
-              night={mock.night}
-              extra={mock.extra}
-            />
 
             {/* <img
           src="/ilustrationCheck.svg"
@@ -84,7 +110,7 @@ export async function getServerSideProps({ params }) {
 
   const { data: room, error } = await supabase
     .from("rooms")
-    .select("*")
+    .select(`*,booking(checkin,checkout,payments)`)
     .eq("id", id);
 
   if (error) {
@@ -93,9 +119,15 @@ export async function getServerSideProps({ params }) {
     };
   }
 
+  const { data: image, err } = await supabase
+    .from("images")
+    .select(`*`)
+    .eq("id", room[0].images_id);
+
   return {
     props: {
       room: room[0],
+      url: image && !err ? image[0].url[0].fileUrl : null,
     },
   };
 }
