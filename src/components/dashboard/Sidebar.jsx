@@ -83,7 +83,7 @@ export default function Sidebar(props) {
 									className="group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark"
 									href="/admin/reviews">
 									<i className="ri-chat-1-line"></i>
-									Reviews
+									Reseñas
 								</Link>
 							</li>
 

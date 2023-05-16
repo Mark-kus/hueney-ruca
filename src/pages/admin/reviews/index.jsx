@@ -37,7 +37,7 @@ export default function Dashboard() {
   return (
     <Layout>
       <Header
-        title="Reviews"
+        title="Reseñas"
         breadcrumbs={
           <>
             <li>/</li>

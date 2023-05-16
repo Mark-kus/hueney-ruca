@@ -260,7 +260,7 @@ export default function Dashboard() {
                   <h4 className="text-title-md font-bold text-black">
                     {countUsers()}
                   </h4>
-                  <span className="text-sm font-medium">Total Users</span>
+                  <span className="text-sm font-medium">Total de usuarios</span>
                 </div>
 
                 <span className="flex items-center gap-1 text-sm font-medium text-meta-5">
