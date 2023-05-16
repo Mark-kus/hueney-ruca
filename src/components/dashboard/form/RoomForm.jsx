@@ -67,12 +67,12 @@ export default function RoomForm({ room }) {
           break;
         case "bathrooms":
           if (value > 10) {
-            error = "El total de banos no debe exceder de 10";
+            error = "El total de baños no debe exceder de 10";
           }
           break;
         case "price":
-          if (value > 10000) {
-            error = "El total de habitaciones no debe exceder de 10000";
+          if (value >= 100) {
+            error = "El precio no puede ser menor a 100";
           }
           break;
         case "description":
