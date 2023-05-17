@@ -21,10 +21,6 @@ export default function Search() {
     });
 
     useEffect(() => {
-        console.log(filters);
-    }, [filters]);
-
-    useEffect(() => {
         const initRequest = async () => {
             if (guests !== undefined) {
                 let aux = parseInt(guests);
