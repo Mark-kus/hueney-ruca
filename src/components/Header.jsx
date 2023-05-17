@@ -27,7 +27,7 @@ export default function Header(props) {
             <header
                 id="headerMain"
                 className={`${props.background ?? "bg-brand-olive"} py-3 ${
-                    pathname === "/" ? "inset-0" : "inset-x-0"
+                    pathname === "/" && navActive ? "inset-0" : "inset-x-0"
                 } fixed z-40 md:py-5`}
             >
                 <div className="container mx-auto px-6 2xl:px-0">
