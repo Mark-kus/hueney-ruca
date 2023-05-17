@@ -3,12 +3,11 @@ import Link from "next/link";
 import { useSession } from "@supabase/auth-helpers-react";
 import { getProfileInfoId } from "helpers/dbHelpers";
 
-
 export default function Header(props) {
     const session = useSession();
     const [navActive, setNavActive] = useState(false);
     const [navbarClassName, setNavbarClassName] = useState("");
-    const [user, setUser] = useState({})
+    const [user, setUser] = useState({});
 
     useEffect(() => {
         let cls =
@@ -25,7 +24,9 @@ export default function Header(props) {
         <>
             <header
                 id="headerMain"
-                className={`${props.background ?? "bg-brand-olive"} py-3 inset-x-0 fixed z-40 md:py-5`}
+                className={`${
+                    props.background ?? "bg-brand-olive"
+                } py-3 inset-0 fixed z-40 md:py-5`}
             >
                 <div className="container mx-auto px-6 2xl:px-0">
                     <div className="flex justify-between items-center">
@@ -71,23 +72,25 @@ export default function Header(props) {
 
                                 <li className="relative select-none">
                                     <button className="select-none">
-
                                         <div>¿Quienes somos?</div>
 
                                         <ul
                                             className="bg-brand-brown text-left text-base 
 																										w-full absolute rounded shadow-md p-2 
-																										hidden">
+																										hidden"
+                                        >
                                             <li
                                                 className="transition-colors px-2 py-1 rounded 
-																											hover:bg-brand-olive">
+																											hover:bg-brand-olive"
+                                            >
                                                 <Link href="/nosotros">
                                                     Nosotros
                                                 </Link>
                                             </li>
                                             <li
                                                 className="transition-colors px-2 py-1 rounded 
-																											hover:bg-brand-olive">
+																											hover:bg-brand-olive"
+                                            >
                                                 <Link href="/comentarios">
                                                     Reseñas
                                                 </Link>
@@ -105,9 +108,7 @@ export default function Header(props) {
                                         <div>Ayuda</div>
                                         <ul className="text-left text-base absolute bg-brand-brown rounded shadow-md p-2 hidden">
                                             <li className="hover:bg-brand-olive transition-colors px-2 py-1 rounded">
-                                                <Link href="/faqs">
-                                                    FAQs
-                                                </Link>
+                                                <Link href="/faqs">FAQs</Link>
                                             </li>
                                             <li className="hover:bg-brand-olive transition-colors px-2 py-1 rounded">
                                                 <Link href="/actividades">
@@ -117,10 +118,9 @@ export default function Header(props) {
                                         </ul>
                                     </button>
                                 </li>
-                                {session
-                                    ? <li className="relative select-none">
+                                {session ? (
+                                    <li className="relative select-none">
                                         <button className="select-none">
-
                                             <div>Perfil</div>
                                             <ul className="md:-left-14 text-left text-base absolute bg-brand-brown rounded shadow-md p-2 hidden">
                                                 <li className="hover:bg-brand-olive transition-colors px-2 py-1 rounded">
@@ -133,25 +133,30 @@ export default function Header(props) {
                                                         Reservas
                                                     </Link>
                                                 </li>
-                                                {user.role > 1 ? <li className="hover:bg-brand-olive transition-colors px-2 py-1 rounded">
-                                                    <Link href="/admin">
-                                                        Dashboard
-                                                    </Link>
-                                                </li> : null}
+                                                {user.role > 1 ? (
+                                                    <li className="hover:bg-brand-olive transition-colors px-2 py-1 rounded">
+                                                        <Link href="/admin">
+                                                            Dashboard
+                                                        </Link>
+                                                    </li>
+                                                ) : null}
                                             </ul>
                                         </button>
                                     </li>
-                                    : <li className="select-none relative">
-                                        <Link href="/login">Iniciar sesión</Link>
+                                ) : (
+                                    <li className="select-none relative">
+                                        <Link href="/login">
+                                            Iniciar sesión
+                                        </Link>
                                     </li>
-                                }
+                                )}
 
                                 <style jsx>{`
-																	.select-none:hover .absolute {
-																		display: block;
-																		z-index: 10;
-																	}
-																`}</style>
+                                    .select-none:hover .absolute {
+                                        display: block;
+                                        z-index: 10;
+                                    }
+                                `}</style>
                             </ul>
                         </nav>
                     </div>
