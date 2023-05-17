@@ -11,13 +11,13 @@ export default function Room({ room }) {
     endDate: null,
   });
   const handleValueChange = (newValue) => {
-    console.log("newValue:", newValue);
     setValue(newValue);
   };
+
   return (
     <Layout>
       {room.images ? (
-        <NavSliders cabanas={room.images.url} />
+        <NavSliders cabanas={room} />
       ) : (
         <div className="h-10 overflow-hidden shadow-lg">
           <h1 className="text-center">No se cargaron imagenes</h1>
