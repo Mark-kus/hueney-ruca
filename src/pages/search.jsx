@@ -43,6 +43,7 @@ export default function Search() {
                 });
                 const response = await fetch(url);
                 const data = await response.json();
+
                 setRooms(data);
                 setIsLoading(false);
             }
@@ -75,8 +76,10 @@ export default function Search() {
                 filters.checkOut;
         }
         console.log(url);
+        setIsLoading(true);
         const response = await fetch(url);
         const data = await response.json();
+        setIsLoading(false);
         setRooms(data);
     };
 
@@ -193,7 +196,7 @@ export default function Search() {
                                     </>
                                 ) : (
                                     // ACA ESTARIA PARA CAMBIAR ESE ?? Por un operador ternario y mandar un mensaje de q no hay cabans disponibles
-                                    rooms instanceof Array ??
+
                                     rooms.map((room) => {
                                         return (
                                             <CardCabin
