@@ -57,7 +57,7 @@ export default function Dashboard() {
         parseInt(mesActual) === parseInt(mes) &&
         parseInt(anioActual) === parseInt(anio)
       ) {
-        totalGuests += bookings[i].adults + bookings[i].children;
+        totalGuests += bookings[i].adults;
       }
     }
     return totalGuests;
@@ -81,7 +81,7 @@ export default function Dashboard() {
         parseInt(mesPasado) === parseInt(mes) &&
         parseInt(anioActual) === parseInt(anio)
       ) {
-        totalGuests += bookings[i].adults + bookings[i].children;
+        totalGuests += bookings[i].adults;
       }
     }
     return totalGuests;
