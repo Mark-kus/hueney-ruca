@@ -84,7 +84,13 @@ const CabinGallery = ({ type, name }) => {
       const fileList = await listFiles();
       setFiles(fileList);
     };
-    getFiles();
+    const interval = setInterval(() => {
+      getFiles();
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const handleSaveChanges = async () => {
@@ -135,7 +141,7 @@ const CabinGallery = ({ type, name }) => {
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-2xl font-bold mb-4">Imagenes de la cabaña {name}:</h1>
+      <h1 className="font-medium text-lg">Imagenes de la cabaña {name}:</h1>
       {files.length > 1 ? (
         <>
           <div className="flex flex-wrap">
@@ -158,15 +164,16 @@ const CabinGallery = ({ type, name }) => {
               </div>
             ))}
           </div>
-          {imageDeleted && (
+          {/* {imageDeleted && ( */}
             <button
-              className=" px-1 py-0.5 bg-blue-400 text-white rounded-md"
+              className=" px-1 py-0.5 bg-blue-400 text-white rounded-md mt=20"
               onClick={handleSaveChanges}
               disabled={loading}
             >
-              {loading ? "Guardando..." : "Guardar cambios"}
+              {/* {loading ? "Guardando..." : "Guardar cambios"} */}
+              Guardar cambios
             </button>
-          )}
+          {/* )} */}
         </>
       ) : (
         <p>No hay imágenes en este bucket</p>

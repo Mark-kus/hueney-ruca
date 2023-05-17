@@ -177,6 +177,7 @@ export default function ContactForm() {
 											font-medium border-2 p-3 relative z-10 border-brand-green 
 											w-full rounded-lg h-40 focus:outline-none focus:text-white"
                 name="message"
+                placeholder="Tu mensaje..."
                 onChange={handleChange}
                 onFocus={inputFocus}
                 onBlur={inputBlur}

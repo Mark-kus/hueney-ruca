@@ -456,7 +456,7 @@ export default function RoomForm({ room }) {
           </div>
 
           <div className="flex flex-col w-2/3 items-center m-auto my-2">
-            <button
+            {/* <button
               onClick={() => setMostrarGallery(!mostrarGallery)}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
@@ -464,7 +464,8 @@ export default function RoomForm({ room }) {
             </button>
             {mostrarGallery && (
               <CabinGallery type={room?.type} name={room?.name} className="" />
-            )}
+            )} */}
+            <CabinGallery type={room?.type} name = {room?.name} className="mt-4" />
           </div>
 
           {/* <div className="rounded-sm border border-stroke bg-white shadow-default">
