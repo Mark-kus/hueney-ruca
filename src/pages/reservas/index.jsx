@@ -65,7 +65,7 @@ export default function Reservas() {
       {session ? (
         <Layout>
           {toggle ? (
-            <article className="h-screen">
+            <article className="min-h-screen mb-6">
               <h1
                 className="text-brand-green text-3xl font-bold 
 			    leading-none text-center pt-14 pb-8 md:text-4xl md:leading-none"
