@@ -13,8 +13,7 @@ export default function Pagination({
             setDisplayedItems(items);
             setTotalPages(0);
             setPages([0]);
-        }
-        if (items.length <= displayedAmount) {
+        } else if (items.length <= displayedAmount) {
             setTotalPages(1);
             setDisplayedItems(items);
             setPages([1]);
@@ -39,12 +38,15 @@ export default function Pagination({
     }, [items]);
 
     useEffect(() => {
-        let auxArr = [...items];
-        auxArr = auxArr.slice(
-            (current - 1) * displayedAmount,
-            current * displayedAmount
-        );
-        setDisplayedItems(auxArr);
+        if (items.length === 0) {
+        } else {
+            let auxArr = [...items];
+            auxArr = auxArr.slice(
+                (current - 1) * displayedAmount,
+                current * displayedAmount
+            );
+            setDisplayedItems(auxArr);
+        }
     }, [current]);
 
     const notCurrentClass =
