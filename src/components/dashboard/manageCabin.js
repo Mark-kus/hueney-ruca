@@ -3,8 +3,7 @@ import { supabase } from "utils/supabase";
 const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
 
 const uploadImages = async (images, id) => {
-    const totalFiles = images.length;
-    let uploadedFiles = 0;
+    const paths = [];
 
     for (const file of images) {
         const { data, error } = await supabase.storage
@@ -12,7 +11,7 @@ const uploadImages = async (images, id) => {
             .upload(`${id}/` + file.name, file);
 
         if (data) {
-            uploadedFiles++;
+            paths.push(data)
         } else if (error) {
             console.log(error);
             Swal.fire(error.message);
@@ -20,9 +19,7 @@ const uploadImages = async (images, id) => {
         }
     }
 
-    if (uploadedFiles !== totalFiles) {
-        Swal.fire("Algunas imagenes no pudieron cargarse", "", "warning");
-    }
+    return paths;
 }
 
 export default async function manageCabin(form, images, id) {
@@ -53,7 +50,11 @@ export default async function manageCabin(form, images, id) {
             active: false,
         });
 
-        if (images.length) await uploadImages(images, id)
+        if (images.length) {
+            const newImages = await uploadImages(images, id)
+            const { error } = await supabase.from("rooms").update({ images: newImages }).eq("id", id)
+            if (error) console.log(error)
+        }
 
         return upRoom;
     } else {
@@ -91,7 +92,11 @@ export default async function manageCabin(form, images, id) {
             throw error;
         }
 
-        if (images.length) await uploadImages(images, postRoom[0].id)
+        if (images.length) {
+            const newImages = await uploadImages(images, postRoom[0].id)
+            const { error } = await supabase.from("rooms").update({ images: newImages }).eq("id", postRoom[0].id)
+            if (error) console.log(error)
+        }
 
         return postRoom;
     }
