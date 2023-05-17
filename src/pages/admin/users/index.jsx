@@ -220,7 +220,7 @@ export default function Dashboard() {
                                                             : null
                                                         }`}
                                                     onClick={() => {
-                                                        if (admin.rol > 2) {
+                                                        if (admin.role > 2) {
                                                             roleChange(
                                                                 user.id,
                                                                 user.role
