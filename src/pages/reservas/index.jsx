@@ -16,6 +16,7 @@ export default function Reservas() {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [toggle, setToggle] = useState(true);
   const session = useSession();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getUserBookings = async () => {
@@ -23,7 +24,9 @@ export default function Reservas() {
         return;
       }
       const response = await axios(`/api/profile/${session.user.id}/bookings`);
+      setIsLoading(true);
       setBookings(response.data);
+      setIsLoading(false);
       setUser(await getProfileInfoId(session.user.id))
     };
     getUserBookings();
@@ -64,8 +67,14 @@ export default function Reservas() {
     <>
       {session ? (
         <Layout>
-          {toggle ? (
-            <article className="min-h-screen mb-6">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-screen">
+              <div className="animate-spin rounded-full h-32 w-32 border-t-6 border-b-6 border-brand-olive"></div>
+            </div>
+          ) : (
+            <>
+              {toggle ? (
+                <article className="min-h-screen mb-6">
               <h1
                 className="text-brand-green text-3xl font-bold 
 			    leading-none text-center pt-14 pb-8 md:text-4xl md:leading-none"
@@ -143,13 +152,15 @@ export default function Reservas() {
                 </h1>
               )}
             </article>
-          ) : (
-            <Opinion setToggle={setToggle} />
-          )}
-        </Layout>
-      ) : (
-        <Login />
-      )}
-    </>
+            ) : (
+              <Opinion setToggle={setToggle} />
+            )}
+          </>
+        )}
+      </Layout>
+    ) : (
+      <Login />
+    )}
+    </> 
   );
 }
