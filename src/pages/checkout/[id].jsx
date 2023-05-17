@@ -17,7 +17,7 @@ export default function CheckOut({ room }) {
   const [loading, setLoading] = useState(true);
   //QUEDA DEFINIR SI USAREMOS COSAS COMO EXTRAS O DESCUENTOS
   const mock = {
-    extra: 20,
+    extra: 0,
   };
 
   const [filters, setFilters] = useState({
