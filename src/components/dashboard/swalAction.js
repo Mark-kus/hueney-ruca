@@ -62,8 +62,13 @@ export default async function swalAction(instancia, id, setter, data, route, sus
                     `Se ${result.isConfirmed ? suspended ? 'habilitó' : 'suspendió' : 'borró'} ${articulo} ${instancia}.`,
                     'success',
                 )
-                // Borra esa instancia de la lista en index
-                setter(data.filter((elem) => elem.id !== id));
+                const finded = data.find(data => data.id === id);
+                result.isConfirmed ? finded.suspended = !finded.suspended :
+                finded.deleted_at = Date.now();
+                setter([
+                    ...data.filter(dato => dato.id !== finded.id),
+                    finded
+                ]);
                 resultado.result = result.value.data;
                 resultado.realizado = true;
             }
