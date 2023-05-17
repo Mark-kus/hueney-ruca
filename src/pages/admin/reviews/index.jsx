@@ -61,8 +61,9 @@ export default function Dashboard() {
 
               <tbody>
                 {reviews &&
-                  reviews.map((review, i) => (
-                    <tr key={review.id}>
+                  reviews.map((review, i) => {
+                    const bg = review.deleted_at ? 'bg-slate-200' : '';
+                    return <tr key={review.id} className={`${bg}`}>
                       <td
                         className={`border-[#eee] py-5 px-4 ${
                           i < reviews.length - 1 ? "border-b" : ""
@@ -152,7 +153,7 @@ export default function Dashboard() {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                      })}
               </tbody>
             </table>
           </div>

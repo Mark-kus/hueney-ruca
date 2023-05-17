@@ -2,7 +2,6 @@ import Layout from "../../../layouts/DashboardLayout";
 import Header from "../../../components/dashboard/PageHeader";
 import TableHead from "../../../components/dashboard/tables/TableHead";
 import Link from "next/link";
-import { supabase } from "utils/supabase";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import swalAction from "components/dashboard/swalAction";
@@ -16,36 +15,11 @@ const table_head = [
     { idx: "actions", title: "Acciones" },
 ];
 
-/**
-export async function getServerSideProps() {
-  const { data: rooms, error } = await supabase
-    .from("rooms")
-    .select("*")
-    .order("name", { ascending: true });
-
-  if (error) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      rooms: rooms,
-    },
-  };
-}
- */
-
 export default function Dashboard({ rooms }) {
     const [roomList, setRoomList] = useState(rooms);
     const [bookings, setBookings] = useState([]);
     const [filteredCabanas, setFilteredCabanas] = useState([]);
     const [displayedCabanas, setDisplayedCabanas] = useState([]);
-
-    // useEffect(() => {
-    //     console.log(displayedCabanas);
-    // }, [displayedCabanas]);
 
     useEffect(() => {
         axios
@@ -113,8 +87,9 @@ export default function Dashboard({ rooms }) {
 
                             <tbody>
                                 {displayedCabanas &&
-                                    displayedCabanas.map((room, i) => (
-                                        <tr key={room.id}>
+                                    displayedCabanas.map((room, i) => {
+                                        const bg = room.deleted_at ? 'bg-slate-200' : '';
+                                        return <tr key={room.id} className={`${bg}`}>
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${
                                                     i <
@@ -195,7 +170,7 @@ export default function Dashboard({ rooms }) {
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
+                                    })}
                             </tbody>
                         </table>
 

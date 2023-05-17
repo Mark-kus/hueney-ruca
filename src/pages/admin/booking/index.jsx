@@ -125,8 +125,9 @@ export default function Dashboard() {
 
                             <tbody>
                                 {displayedBookings &&
-                                    displayedBookings.map((booking, i) => (
-                                        <tr key={booking.id}>
+                                    displayedBookings.map((booking, i) => {
+                                        const bg = booking.deleted_at ? 'bg-slate-200' : '';
+                                        return <tr key={booking.id} className={`${bg}`}>
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${
                                                     i <
@@ -223,7 +224,7 @@ export default function Dashboard() {
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
+                                    })}
                             </tbody>
                         </table>
                         <Pagination

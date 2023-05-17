@@ -188,8 +188,9 @@ export default function Dashboard() {
 
                             <tbody>
                                 {displayedUsers instanceof Array &&
-                                    displayedUsers.map((user, i) => (
-                                        <tr key={i}>
+                                    displayedUsers.map((user, i) => {
+                                        const bg = user.deleted_at ? 'bg-slate-200' : '';
+                                        return <tr key={i} className={`${bg}`}>
                                             <td
                                                 className={`border-[#eee] py-5 px-4 ${i < user.length - 1
                                                         ? "border-b"
@@ -275,7 +276,7 @@ export default function Dashboard() {
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
+                                    })}
                             </tbody>
                         </table>
                         <Pagination
