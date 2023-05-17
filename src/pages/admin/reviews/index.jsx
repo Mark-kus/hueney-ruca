@@ -150,6 +150,13 @@ export default function Dashboard() {
                             className="hover:text-primary ri-close-circle-line text-xl leading-none"
                             onClick={() => deleteHandler(review)}
                           ></button>
+                          <p className="text-xs">
+                            {review.suspended ? (
+                              <i className="ri-checkbox-blank-circle-fill text-red-700 opacity-50"></i>
+                            ) : (
+                              <i className="ri-checkbox-blank-circle-fill text-green-500 opacity-50"></i>
+                            )}
+                          </p>
                         </div>
                       </td>
                     </tr>
