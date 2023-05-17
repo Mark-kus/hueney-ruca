@@ -42,26 +42,26 @@ export default function Header(props) {
     }
   }, [user.deleted_at]);
 
-  return (
-    <>
-      <header
-        id="headerMain"
-        className={`${props.background ?? "bg-brand-olive"} py-3 ${
-          pathname === "/" ? "inset-0" : "inset-x-0"
-        } fixed z-40 md:py-5`}
-      >
-        <div className="container mx-auto px-6 2xl:px-0">
-          <div className="flex justify-between items-center">
-            <Link href="/">
-              <h1 className="cursor-pointer">
-                <img
-                  src="/brand.svg"
-                  alt="Hueney Ruca"
-                  className="w-32 md:w-48"
-                />
-                <span className="sr-only">Hueney Ruca</span>
-              </h1>
-            </Link>
+    return (
+        <>
+            <header
+                id="headerMain"
+                className={`${props.background ?? "bg-brand-olive"} py-3 ${
+                    pathname === "/" && navActive ? "inset-0" : "inset-x-0"
+                } fixed z-40 md:py-5`}
+            >
+                <div className="container mx-auto px-6 2xl:px-0">
+                    <div className="flex justify-between items-center">
+                        <Link href="/">
+                            <h1 className="cursor-pointer">
+                                <img
+                                    src="/brand.svg"
+                                    alt="Hueney Ruca"
+                                    className="w-32 md:w-48"
+                                />
+                                <span className="sr-only">Hueney Ruca</span>
+                            </h1>
+                        </Link>
 
             <button
               className="text-white text-2xl leading-none select-none md:hidden"
