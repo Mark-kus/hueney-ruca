@@ -61,10 +61,10 @@ export default function RoomForm({ room }) {
           if (value.length > 32) {
             error = "El nombre debe tener como máximo 32 caracteres";
           }
-          const findRoomName = rooms.find((room) => room.name === value);
-          if (findRoomName) {
-            error = "El nombre de la cabana ya esta en uso";
-          }
+          // const findRoomName = rooms.find((room) => room.name === value);
+          // if (findRoomName) {
+          //   error = "El nombre de la cabana ya esta en uso";
+          // }
           break;
         case "rooms":
           if (value > 10) {

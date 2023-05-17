@@ -7,7 +7,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 export const getAllRooms = async (query) => {
   const { data: rooms, error } = await supabase
     .from("rooms")
-    .select(`*,booking(checkin,checkout), images(url)`)
+    .select(`*,booking(checkin,checkout)`)
     .order("created_at", { ascending: false });
 
   if (error) {
