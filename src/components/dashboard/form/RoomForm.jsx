@@ -7,10 +7,12 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import CabinBuckets from "components/CabinBuckets";
 import CabinGallery from "components/CabinGallery";
+import manageCabin from "../manageCabin";
 
 export default function RoomForm({ room }) {
   const types = ["A", "B", "C"];
   const [errors, setErrors] = useState({});
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const [form, setForm] = useState({
     name: room?.name || "", // `Cabaña #${ Date.now() }`,
@@ -113,16 +115,13 @@ export default function RoomForm({ room }) {
   const submitHandler = (e) => {
     e.preventDefault();
     if (Object.values(errors).some((error) => error !== null)) {
-      // Si hay un error, se evita hacer el submit y tira un alert vintage
       Swal.fire("Debes correjir los errores", "", "warning");
       return;
     }
-    setStatus(true);
 
     setStatus(true);
     if (room?.id) {
-      axios
-        .put("/api/cabanas", { form, idRoom: room.id })
+      manageCabin(form, selectedFiles, room.id)
         .then((resp) => {
           // console.log(resp.data)
           Swal.fire("Yuju!", "Actualizamos exitosamente tu cabaña", "success");
@@ -138,10 +137,8 @@ export default function RoomForm({ room }) {
           setStatus(false);
         });
     } else {
-      axios
-        .post("/api/cabanas", form)
-        .then((resp) => {
-          // console.log(resp.data)
+      manageCabin(form, selectedFiles)
+        .then((data) => {
           Swal.fire("Whoa!", "Tu nueva cabaña ya está lista", "success");
           router.push("/admin/rooms");
         })
@@ -448,10 +445,9 @@ export default function RoomForm({ room }) {
             </button> */}
             {/* {mostrarBucket && ( */}
             <CabinBuckets
-              type={room?.type}
-              name={room?.name}
-              className="mt-4"
-            />
+            selectedFiles={selectedFiles}
+            setSelectedFiles={setSelectedFiles}
+            className="mt-4" />
             {/* )} */}
           </div>
 
