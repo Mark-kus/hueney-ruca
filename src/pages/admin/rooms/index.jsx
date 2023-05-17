@@ -69,16 +69,16 @@ export default function Dashboard({ rooms }) {
         return counter;
     };
 
-  const deleteHandler = async (room) => {
-    swalAction(
-      'cabaña',
-      room.id,
-      setRoomList,
-      roomList,
-			'cabanas',
-      room.suspended,
-    );
-  };
+    const deleteHandler = async (room) => {
+        swalAction(
+            "cabaña",
+            room.id,
+            setRoomList,
+            roomList,
+            "cabanas",
+            room.suspended
+        );
+    };
 
     return (
         <Layout>
@@ -187,7 +187,9 @@ export default function Dashboard({ rooms }) {
                                                         <i className="ri-edit-line text-xl leading-none"></i>
                                                     </Link>
                                                     <button
-                                                        onClick={() => deleteHandler(room)}
+                                                        onClick={() =>
+                                                            deleteHandler(room)
+                                                        }
                                                         className="hover:text-primary ri-close-circle-line text-xl leading-none"
                                                     ></button>
                                                 </div>
@@ -197,15 +199,19 @@ export default function Dashboard({ rooms }) {
                             </tbody>
                         </table>
 
-                        <Pagination
-                            items={
-                                filteredCabanas instanceof Array
-                                    ? filteredCabanas
-                                    : []
-                            }
-                            displayedAmount={8}
-                            setDisplayedItems={setDisplayedCabanas}
-                        />
+                        {filteredCabanas instanceof Array ? (
+                            <Pagination
+                                items={
+                                    filteredCabanas instanceof Array
+                                        ? filteredCabanas
+                                        : []
+                                }
+                                displayedAmount={8}
+                                setDisplayedItems={setDisplayedCabanas}
+                            />
+                        ) : (
+                            ""
+                        )}
                     </div>
                 </div>
             </div>
