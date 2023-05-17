@@ -7,7 +7,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 export const getAllRooms = async (query) => {
   const { data: rooms, error } = await supabase
     .from("rooms")
-    .select(`*,booking(checkin,checkout), images(url)`)
+    .select(`*,booking(checkin,checkout)`)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -37,8 +37,22 @@ export const getRoomById = async (id) => {
   return room;
 };
 
+//IMAGES UPLOAD FOR POST
+const uploadImages = async (images, id) => {
+  // subida de imagenes sin terminar, se está haciendo en el front
+  for (const file of images) {
+    const { data, error } = await supabase.storage
+      .from("cabanas_gallery")
+      .upload(`${id}/` + file.name, file.url);
+
+    if (error) {
+      console.log(error);
+    }
+  }
+}
+
 //POST
-export const postRoom = async (form_data) => {
+export const postRoom = async (form_data, images) => {
   //console.log(form_data);
   //creacion en stripe
   const newCabana = await stripe.products.create({
@@ -74,6 +88,9 @@ export const postRoom = async (form_data) => {
   if (error) {
     throw error;
   }
+
+  // if (images.length) await uploadImages(images, postRoom[0].id)
+
   return postRoom;
 };
 

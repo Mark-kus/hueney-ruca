@@ -89,7 +89,7 @@ export default function Cabins({ plans }) {
                   {cabin.images ? (
                     <div className="h-56 overflow-hidden rounded-2xl shadow-lg">
                       <img
-                        src={cabin.images.url[0].fileUrl}
+                        src={cabin.images[0].path}
                         alt={cabin.name}
                         className="w-full h-full object-cover"
                       />

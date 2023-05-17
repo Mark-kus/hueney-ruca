@@ -1,42 +1,4 @@
-import { supabase } from "../utils/supabase";
-import { useState } from "react";
-import Swal from "sweetalert2";
-
-//type  y name seran los valores de la cabaña dado por el formulario para editar
-
-const CabinBuckets = ({ type, name }) => {
-  //en los buckets de Supabase no permite la ñ
-  const newName = name && name.startsWith("Cabaña ") ? name.replace("Cabaña ", "") : 
-  name;
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const [uploading, setUploading] = useState(false);
-
-  const handleUpload = async () => {
-    setUploading(true);
-    const totalFiles = selectedFiles.length;
-    let uploadedFiles = 0;
-
-    for (const selectedFile of selectedFiles) {
-      const { data, error } = await supabase.storage
-        .from("cabanas_gallery")
-        .upload(`${type}/${newName}/` + selectedFile?.name, selectedFile);
-
-      if (data) {
-        uploadedFiles++;
-      } else if (error) {
-        console.log(error);
-        Swal.fire(error.message);
-        setUploading(false);
-        return;
-      }
-    }
-
-    if (uploadedFiles === totalFiles) {
-      Swal.fire("Todas las imágenes se subieron correctamente");
-      setSelectedFiles([]);
-      setUploading(false);
-    }
-  };
+const CabinBuckets = ({ selectedFiles, setSelectedFiles }) => {
 
   const handleDeleteClick = (i) => {
     selectedFiles.splice(i, 1);
@@ -82,7 +44,7 @@ const CabinBuckets = ({ type, name }) => {
                 </div>
               ))}
             </div>
-            <div className="flex w-1/2">
+            {/* <div className="flex w-1/2">
               <button
                 onClick={handleUpload}
                 className={`px-4 py-2 w-1/2 rounded-l-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${uploading
@@ -101,7 +63,7 @@ const CabinBuckets = ({ type, name }) => {
               >
                 Cancelar
               </button>
-            </div>
+            </div> */}
           </div>
         )}
       </div>

@@ -10,7 +10,7 @@ import { addDays, diffDays } from "helpers/dateProcessing";
 import SkeletonCheckOutForm from "components/SkeletonCheckOutForm";
 import SkeletonSummaryCheck from "components/SkeletonSummaryCheck";
 
-export default function CheckOut({ room, url }) {
+export default function CheckOut({ room }) {
   const session = useSession();
 
   const [matchingProduct, setMatchingProduct] = useState(null);
@@ -78,7 +78,7 @@ export default function CheckOut({ room, url }) {
                     extra={mock.extra}
                   />
                   <SummaryCheckOut
-                    url={url}
+                    url={room.images[0].path}
                     name={room.name}
                     price={room.price}
                     night={diffDays(
@@ -119,15 +119,9 @@ export async function getServerSideProps({ params }) {
     };
   }
 
-  const { data: image, err } = await supabase
-    .from("images")
-    .select(`*`)
-    .eq("id", room[0].images_id);
-
   return {
     props: {
       room: room[0],
-      url: image && !err ? image[0].url[0].fileUrl : null,
     },
   };
 }
