@@ -7,11 +7,14 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import CabinBuckets from "components/CabinBuckets";
 import CabinGallery from "components/CabinGallery";
+import manageCabin from "../manageCabin";
 
 export default function RoomForm({ room }) {
   const types = ["A", "B", "C"];
   const [errors, setErrors] = useState({});
-  const [rooms, setRooms] = useState();
+  const [rooms, setRooms] = useState(); 
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
   const [form, setForm] = useState({
     name: room?.name || "", // `Cabaña #${ Date.now() }`,
     type: room?.type || "A",
@@ -58,10 +61,10 @@ export default function RoomForm({ room }) {
           if (value.length > 32) {
             error = "El nombre debe tener como máximo 32 caracteres";
           }
-          const findRoomName = rooms.find((room) => room.name === value);
-          if (findRoomName) {
-            error = "El nombre de la cabana ya esta en uso";
-          }
+          // const findRoomName = rooms.find((room) => room.name === value);
+          // if (findRoomName) {
+          //   error = "El nombre de la cabana ya esta en uso";
+          // }
           break;
         case "rooms":
           if (value > 10) {
@@ -126,16 +129,13 @@ export default function RoomForm({ room }) {
   const submitHandler = (e) => {
     e.preventDefault();
     if (Object.values(errors).some((error) => error !== null)) {
-      // Si hay un error, se evita hacer el submit y tira un alert vintage
       Swal.fire("Debes correjir los errores", "", "warning");
       return;
     }
-    setStatus(true);
 
     setStatus(true);
     if (room?.id) {
-      axios
-        .put("/api/cabanas", { form, idRoom: room.id })
+      manageCabin(form, selectedFiles, room.id)
         .then((resp) => {
           // console.log(resp.data)
           Swal.fire("Yuju!", "Actualizamos exitosamente tu cabaña", "success");
@@ -151,10 +151,8 @@ export default function RoomForm({ room }) {
           setStatus(false);
         });
     } else {
-      axios
-        .post("/api/cabanas", form)
-        .then((resp) => {
-          // console.log(resp.data)
+      manageCabin(form, selectedFiles)
+        .then((data) => {
           Swal.fire("Whoa!", "Tu nueva cabaña ya está lista", "success");
           router.push("/admin/rooms");
         })
@@ -461,10 +459,9 @@ export default function RoomForm({ room }) {
             </button> */}
             {/* {mostrarBucket && ( */}
             <CabinBuckets
-              type={room?.type}
-              name={room?.name}
-              className="mt-4"
-            />
+            selectedFiles={selectedFiles}
+            setSelectedFiles={setSelectedFiles}
+            className="mt-4" />
             {/* )} */}
           </div>
 
@@ -478,7 +475,7 @@ export default function RoomForm({ room }) {
             {mostrarGallery && (
               <CabinGallery type={room?.type} name={room?.name} className="" />
             )} */}
-            <CabinGallery type={room?.type} name = {room?.name} className="mt-4" />
+            <CabinGallery id={room?.id} className="mt-4" />
           </div>
 
           {/* <div className="rounded-sm border border-stroke bg-white shadow-default">

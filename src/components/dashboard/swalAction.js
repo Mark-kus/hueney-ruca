@@ -66,7 +66,6 @@ export default async function swalAction(instancia, id, setter, data, route, sus
                 setter(data.filter((elem) => elem.id !== id));
                 resultado.result = result.value.data;
                 resultado.realizado = true;
-                console.log(resultado);
             }
         })
     return resultado

@@ -45,11 +45,11 @@ export default class NavSliders extends Component {
 							ref={slider => (this.slider1 = slider)}
 							{...this.settings1}
 							className="h-full">
-								{this.props.cabanas.map((image, i) => (
+								{this.props.cabanas.images.map((image, i) => (
 										<img 
 											key={i} 
-											src={image.fileUrl} 
-											alt={this.props.cabanas.alt}
+											src={image.path} 
+											alt={image.name}
 											className="w-full h-full object-cover" />
 								))}
 						</Slider>
@@ -63,12 +63,12 @@ export default class NavSliders extends Component {
 							ref={slider => (this.slider2 = slider)}
 							{...this.settings2}>
 
-							{this.props.cabanas.map((image, i) => (
+							{this.props.cabanas.images.map((image, i) => (
 								<div key={i} className="cursor-pointer px-1.5">
 									<div className="">
 										<img 
-											src={image.fileUrl} 
-											alt={this.props.cabanas.alt}
+											src={image.path} 
+											alt={image.name}
 											className="w-full h-14 object-cover rounded-lg" />
 									</div>
 								</div>
