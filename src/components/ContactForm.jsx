@@ -113,7 +113,7 @@ export default function ContactForm() {
   return (
     <>
       <ToastContainer />
-      <form ref={input} onSubmit={handleSubmit} className="flex flex-col">
+      <form ref={input} onSubmit={handleSubmit} className="flex flex-col min-w-[350px]">
         <div className="space-y-5">
           <div className="space-y-2">
             <label className="text-brand-green text-xs font-semibold pl-1 block">
