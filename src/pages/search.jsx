@@ -44,7 +44,7 @@ export default function Search() {
                 const response = await fetch(url);
                 const data = await response.json();
 
-                setRooms(data);
+                setRooms(data.filter(room => room.deleted_at === null));
                 setIsLoading(false);
             }
         };
@@ -79,7 +79,7 @@ export default function Search() {
         const response = await fetch(url);
         const data = await response.json();
         setIsLoading(false);
-        setRooms(data);
+        setRooms(data.filter(room => room.deleted_at === null));
     };
 
     return (

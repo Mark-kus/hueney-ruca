@@ -34,7 +34,7 @@ export default function Cabins({ plans }) {
     axios
       .get("/api/cabanas")
       .then((response) => {
-        setCabins(response.data);
+        setCabins(response.data.filter(room => room.deleted_at === null));
       })
       .catch((error) => {
         console.log(error);
