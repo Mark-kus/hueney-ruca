@@ -14,9 +14,10 @@ export default function Layout({ children }) {
 
 	useEffect(() => {
 		async function getProfile() {
+			console.log(session);
 			const user = await getProfileInfoId(session?.user?.id);
 			setUser(user);
-			if (session === null || user.role < 2) {
+			if (!session || user.role < 2) {
 				router.push('/');
 			} else {
 				setLoading(false);
