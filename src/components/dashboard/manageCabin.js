@@ -12,6 +12,7 @@ const uploadImages = async (images, id) => {
 
         if (data) {
             paths.push({
+                name: file.name,
                 path: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/cabanas_gallery/${data.path}`
             })
         } else if (error) {
