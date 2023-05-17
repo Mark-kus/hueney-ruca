@@ -11,7 +11,9 @@ const uploadImages = async (images, id) => {
             .upload(`${id}/` + file.name, file);
 
         if (data) {
-            paths.push(data)
+            paths.push({
+                path: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/cabanas_gallery/${data.path}`
+            })
         } else if (error) {
             console.log(error);
             Swal.fire(error.message);

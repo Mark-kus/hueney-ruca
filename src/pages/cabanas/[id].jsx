@@ -130,7 +130,7 @@ export async function getServerSideProps({ params }) {
 
   const { data: room, error } = await supabase
     .from("rooms")
-    .select(`*,booking(checkin,checkout,payments), images(url, alt)`)
+    .select(`*,booking(checkin,checkout,payments)`)
     .eq("id", id);
 
   if (error) {
