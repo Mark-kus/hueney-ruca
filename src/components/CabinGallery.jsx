@@ -35,7 +35,7 @@ const CabinGallery = ({ id }) => {
       console.log(error);
     }
   };
-console.log(files);
+
   const handleDelete = async (file) => {
     setImageDeleted(true);
     Swal.fire({
@@ -95,7 +95,7 @@ console.log(files);
         <>
           <div className="flex flex-wrap">
             {files.map((file, index) => (
-              <div key={index} className="w-1/4 p-2">
+              <div key={index} className="w-1/4 md:w-1/2 p-2">
                 <img
                   src={`${urlBucket}/${id}/${file.name}`}
                   alt={file.name}
