@@ -65,31 +65,74 @@ export default function ThankYou() {
         verifiedRoomPaid();
     }, [checkoutSession]);
 
+    useEffect(() => {
+        console.log(thankYouData);
+    }, [thankYouData]);
+
     const sendEmail = async () => {
         setButtonDisabled(true);
         const username = thankYouData.session.customer_details.name;
         // envío de email, message es lo que va dentro de él
-        emailjs.send(
-            process.env.NEXT_PUBLIC_EMAIL_SERVICE_ID,
-            process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_GENERIC,
-            {
-                user_name: username,
-                user_email: thankYouData.session.customer_details.email,
-                message: `Hola ${username}, gracias por elegirnos para unas vacaciones! 
+        emailjs
+            .send(
+                process.env.NEXT_PUBLIC_EMAIL_SERVICE_ID,
+                process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_GENERIC,
+                {
+                    user_name: username,
+                    user_email: thankYouData.session.customer_details.email,
+                    message: `Hola ${username}, gracias por elegirnos para unas vacaciones! 
                 Ya casi está todo listo, solo faltas vos! Junto a este mail
-                te compartimos la información de la reserva que hiciste. Te esperamos!`,
-            },
-            process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY
-        )
-            .then(response => {
-                Swal.fire('Ya te enviamos un email con la información pedida', '', 'success')
+                te compartimos la información de la reserva que hiciste. Te esperamos!
+                
+                Detalles de la compra:
+                Email: ${thankYouData.session.customer_details.email}
+                Nombre: ${thankYouData.session.customer_details.name}
+                Cabaña reservada: ${thankYouData.cabana.name}
+                Detalles del precio:
+                Cantidad de adultos: ${thankYouData.booking.adults}
+                Cantidad de niños: ${
+                    thankYouData.booking.children === null
+                        ? 0
+                        : thankYouData.booking.children
+                }
+                Precio por noche ($${thankYouData.cabana.price}) x ${diffDays(
+                        new Date(thankYouData.booking.checkin),
+                        new Date(thankYouData.booking.checkout)
+                    )} noches...........................................${
+                        thankYouData.cabana.price *
+                        diffDays(
+                            new Date(thankYouData.booking.checkin),
+                            new Date(thankYouData.booking.checkout)
+                        )
+                    }
+                Total..............................................................................................${
+                    thankYouData.cabana.price *
+                    diffDays(
+                        new Date(thankYouData.booking.checkin),
+                        new Date(thankYouData.booking.checkout)
+                    )
+                }
+                `,
+                },
+                process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY
+            )
+            .then((response) => {
+                Swal.fire(
+                    "Ya te enviamos un email con la información pedida",
+                    "",
+                    "success"
+                );
                 setButtonDisabled(false);
             })
-            .catch(error => {
-                Swal.fire('Hubo un error al enviarte los datos', 'Intenta de nuevo más tarde', 'error')
+            .catch((error) => {
+                Swal.fire(
+                    "Hubo un error al enviarte los datos",
+                    "Intenta de nuevo más tarde",
+                    "error"
+                );
                 setButtonDisabled(false);
             });
-    }
+    };
 
     return (
         <LayoutMain>
@@ -136,7 +179,7 @@ export default function ThankYou() {
                                         {thankYouData.null === true
                                             ? "..."
                                             : thankYouData.session
-                                                .customer_details.name}
+                                                  .customer_details.name}
                                     </span>
                                 </h3>
                                 <h3 className="flex justify-between text-black text-lg">
@@ -145,7 +188,7 @@ export default function ThankYou() {
                                         {thankYouData.null === true
                                             ? "..."
                                             : thankYouData.session
-                                                .customer_details.email}
+                                                  .customer_details.email}
                                     </span>
                                 </h3>
                             </div>
@@ -169,7 +212,7 @@ export default function ThankYou() {
                                         {thankYouData.null === true
                                             ? "..."
                                             : thankYouData.booking.children ??
-                                            0}
+                                              0}
                                     </span>
                                 </h3>
                                 <h3 className="flex justify-between text-black text-lg">
@@ -181,20 +224,20 @@ export default function ThankYou() {
                                     {thankYouData.null === true
                                         ? "..."
                                         : diffDays(
-                                            new Date(
-                                                thankYouData.booking.checkin
-                                            ),
-                                            new Date(
-                                                thankYouData.booking.checkout
-                                            )
-                                        )}{" "}
+                                              new Date(
+                                                  thankYouData.booking.checkin
+                                              ),
+                                              new Date(
+                                                  thankYouData.booking.checkout
+                                              )
+                                          )}{" "}
                                     noches:
                                     <span>
                                         $
                                         {thankYouData.null === true
                                             ? "..."
                                             : thankYouData.session
-                                                .amount_subtotal / 100}
+                                                  .amount_subtotal / 100}
                                     </span>
                                 </h3>
                                 <h3 className="flex justify-between text-black text-lg">
@@ -210,7 +253,7 @@ export default function ThankYou() {
                                         {thankYouData.null === true
                                             ? "..."
                                             : thankYouData.session
-                                                .amount_total / 100}
+                                                  .amount_total / 100}
                                     </span>
                                 </h3>
                             </div>
