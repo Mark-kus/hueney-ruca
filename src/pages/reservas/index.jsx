@@ -25,7 +25,7 @@ export default function Reservas() {
       }
       const response = await axios(`/api/profile/${session.user.id}/bookings`);
       setIsLoading(true);
-      setBookings(response.data);
+      setBookings(response.data.filter(booking => booking.deleted_at === null));
       setIsLoading(false);
       setUser(await getProfileInfoId(session.user.id))
     };
