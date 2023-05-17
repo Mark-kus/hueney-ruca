@@ -14,19 +14,26 @@ export default function Layout({ children }) {
 
 	useEffect(() => {
 		async function getProfile() {
-			console.log(session);
-			const user = await getProfileInfoId(session?.user?.id);
-			setUser(user);
-			if (!session || user.role < 2) {
-				router.push('/');
+			if (session !== null) {
+				const user = await getProfileInfoId(session?.user?.id);
+				setUser(user);
+				if (user.role > 1) {
+					setLoading(false);
+				} else {
+					router.push('/');
+				}
 			} else {
-				setLoading(false);
+				router.push('/');
 			}
 		};
 
 		if (session) {
 			getProfile();
-		};
+		} else {
+			setTimeout(() => {
+				getProfile();
+			}, 2000);
+		}
 	}, [session]);
 
 	const closeSidebar = () => setSidebarStatus(false)
