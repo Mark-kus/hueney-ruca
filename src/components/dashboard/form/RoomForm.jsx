@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Services from "../../../helpers/services";
 import BtnSubmit from "./BtnSubmit";
@@ -11,7 +11,7 @@ import CabinGallery from "components/CabinGallery";
 export default function RoomForm({ room }) {
   const types = ["A", "B", "C"];
   const [errors, setErrors] = useState({});
-
+  const [rooms, setRooms] = useState();
   const [form, setForm] = useState({
     name: room?.name || "", // `Cabaña #${ Date.now() }`,
     type: room?.type || "A",
@@ -32,6 +32,15 @@ export default function RoomForm({ room }) {
   );
   const [status, setStatus] = useState(false);
 
+  useEffect(() => {
+    axios
+      .get("/api/cabanas")
+      .then((resp) => {
+        setRooms(resp.data);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
   const changeHandler = (e) => {
     const { name, value } = e.target;
     if (services.includes(name)) {
@@ -48,6 +57,10 @@ export default function RoomForm({ room }) {
         case "name":
           if (value.length > 32) {
             error = "El nombre debe tener como máximo 32 caracteres";
+          }
+          const findRoomName = rooms.find((room) => room.name === value);
+          if (findRoomName) {
+            error = "El nombre de la cabana ya esta en uso";
           }
           break;
         case "rooms":
