@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "@supabase/auth-helpers-react";
 import { getProfileInfoId } from "helpers/dbHelpers";
+import { useRouter } from "next/router";
 
 export default function Header(props) {
     const session = useSession();
     const [navActive, setNavActive] = useState(false);
     const [navbarClassName, setNavbarClassName] = useState("");
     const [user, setUser] = useState({});
+    const { pathname } = useRouter();
 
     useEffect(() => {
         let cls =
@@ -24,9 +26,9 @@ export default function Header(props) {
         <>
             <header
                 id="headerMain"
-                className={`${
-                    props.background ?? "bg-brand-olive"
-                } py-3 inset-0 fixed z-40 md:py-5`}
+                className={`${props.background ?? "bg-brand-olive"} py-3 ${
+                    pathname === "/" ? "inset-0" : "inset-x-0"
+                } fixed z-40 md:py-5`}
             >
                 <div className="container mx-auto px-6 2xl:px-0">
                     <div className="flex justify-between items-center">
