@@ -4,6 +4,12 @@ import CardCabin from "components/seeAllCabins/CardCabin";
 import CardSkeleton from "components/seeAllCabins/CardSkeleton";
 import Layout from "../layouts/Layout";
 import Datepicker from "components/form/Datepicker";
+import { addDays } from "helpers/dateProcessing";
+
+Date.prototype.addHours = function (h) {
+    this.setTime(this.getTime() + h * 60 * 60 * 1000);
+    return this;
+};
 
 export default function Search() {
     const router = useRouter();
@@ -18,33 +24,24 @@ export default function Search() {
         const initRequest = async () => {
             if (guests !== undefined) {
                 let aux = parseInt(guests);
-                let auxCheckIn = "";
-                let auxCheckOut = "";
 
                 let url = "api/cabanas?capacity=" + aux;
                 if (checkin !== "" && checkout !== "") {
-                    auxCheckIn = checkin.replaceAll('"', "");
-                    auxCheckOut = checkin.replaceAll('"', "");
-                    url =
-                        url +
-                        "&checkin=" +
-                        auxCheckIn +
-                        "&checkout=" +
-                        auxCheckOut;
-                } else {
-                    auxCheckIn = new Date();
-                    auxCheckOut = new Date();
+                    url = url + "&checkin=" + checkin + "&checkout=" + checkout;
                 }
+
                 setFilters({
                     ...filters,
                     capacity: aux,
-                    checkIn: new Date(auxCheckIn),
-                    checkOut: new Date(auxCheckOut),
+                    checkIn:
+                        checkin === "" ? null : new Date(checkin).addHours(4),
+                    checkOut:
+                        checkout === "" ? null : new Date(checkout).addHours(4),
                 });
+
                 const response = await fetch(url);
                 const data = await response.json();
-
-                setRooms(data.filter(room => room.deleted_at === null));
+                setRooms(data.filter((room) => room.deleted_at === null));
                 setIsLoading(false);
             }
         };
@@ -79,7 +76,7 @@ export default function Search() {
         const response = await fetch(url);
         const data = await response.json();
         setIsLoading(false);
-        setRooms(data.filter(room => room.deleted_at === null));
+        setRooms(data.filter((room) => room.deleted_at === null));
     };
 
     return (
@@ -101,10 +98,10 @@ export default function Search() {
                                     </label>
                                     <div className="p-0.5 w-full rounded-xl bg-white mb-3">
                                         <Datepicker
-                                            min={new Date()}
+                                            minDate={new Date()}
                                             defaultDate={
                                                 filters.checkIn === null
-                                                    ? undefined
+                                                    ? addDays(new Date(), 1)
                                                     : filters.checkIn
                                             }
                                             setDate={(e) => {
@@ -112,9 +109,12 @@ export default function Search() {
                                                     ...filters,
                                                     checkIn: new Date(e),
                                                     checkOut:
-                                                        new Date(e) >
+                                                        new Date(e) >=
                                                         filters.checkOut
-                                                            ? new Date(e)
+                                                            ? addDays(
+                                                                  new Date(e),
+                                                                  1
+                                                              )
                                                             : filters.checkOut,
                                                 });
                                             }}
@@ -130,10 +130,10 @@ export default function Search() {
                                     </label>
                                     <div className="p-0.5 w-full rounded-xl bg-white mb-3">
                                         <Datepicker
-                                            min={filters.checkIn}
+                                            minDate={addDays(new Date(), 1)}
                                             defaultDate={
                                                 filters.checkOut === null
-                                                    ? undefined
+                                                    ? addDays(new Date(), 2)
                                                     : filters.checkOut
                                             }
                                             setDate={(e) => {
