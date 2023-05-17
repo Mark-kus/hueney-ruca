@@ -27,7 +27,7 @@ const CabinGallery = ({ id }) => {
           const fileUrl = `${urlBucket}/${id}/${file.name}`;
           return {
             name: file.name,
-            fileUrl: fileUrl,
+            path: fileUrl,
           };
         });
         return fileList;
