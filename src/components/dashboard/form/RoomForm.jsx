@@ -461,7 +461,7 @@ export default function RoomForm({ room }) {
             {mostrarGallery && (
               <CabinGallery type={room?.type} name={room?.name} className="" />
             )} */}
-            <CabinGallery id={room.id} className="mt-4" />
+            <CabinGallery id={room?.id} className="mt-4" />
           </div>
 
           {/* <div className="rounded-sm border border-stroke bg-white shadow-default">

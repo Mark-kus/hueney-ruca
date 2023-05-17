@@ -12,27 +12,29 @@ const CabinGallery = ({ id }) => {
   // console.log(files);
 
   const listFiles = async () => {
-    try {
-      const { data: files, error } = await supabase.storage
-        .from("cabanas_gallery")
-        .list(`${id}`);
-
-      if (error) {
-        console.error(error);
-        return [];
+    if (id) {
+      try {
+        const { data: files, error } = await supabase.storage
+          .from("cabanas_gallery")
+          .list(`${id}`);
+  
+        if (error) {
+          console.error(error);
+          return [];
+        }
+  
+        const fileList = files.map((file) => {
+          const fileUrl = `${urlBucket}/${id}/${file.name}`;
+          return {
+            name: file.name,
+            fileUrl: fileUrl,
+          };
+        });
+        return fileList;
+      } catch (error) {
+        Swal.fire(errorSwal);
+        console.log(error);
       }
-
-      const fileList = files.map((file) => {
-        const fileUrl = `${urlBucket}/${id}/${file.name}`;
-        return {
-          name: file.name,
-          fileUrl: fileUrl,
-        };
-      });
-      return fileList;
-    } catch (error) {
-      Swal.fire(errorSwal);
-      console.log(error);
     }
   };
 
@@ -65,7 +67,7 @@ const CabinGallery = ({ id }) => {
         }
 
         const newFiles = files.filter((f) => f.name !== file.name);
-        setFiles(newFiles);
+        setFiles(newImages);
 
         Swal.fire({
           title: "Se eliminó la imagen correctamente",
@@ -91,7 +93,7 @@ const CabinGallery = ({ id }) => {
 
   return (
     <div className="max-w-xl">
-      {files.length > 1 ? (
+      {id && files.length > 1 ? (
         <>
           <div className="flex flex-wrap">
             {files.map((file, index) => (
