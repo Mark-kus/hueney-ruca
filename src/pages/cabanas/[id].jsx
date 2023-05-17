@@ -60,7 +60,7 @@ export default function Room({ room }) {
             </div>
 
             <ul className="my-5">
-              <h1 className="">Incluye:</h1>
+              <h1 className="font-semibold">Incluye:</h1>
               {room.services.map((service, i) => (
                 <li
                   className="whitespace-pre-wrap text-sm ml-2"
@@ -71,7 +71,7 @@ export default function Room({ room }) {
               ))}
             </ul>
 
-            <h1>Detalles:</h1>
+            <h1 className="font-semibold">Detalles:</h1>
             <p>{room.description}</p>
 
             <div className="mt-6">
