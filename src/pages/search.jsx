@@ -75,7 +75,6 @@ export default function Search() {
                 "&checkout=" +
                 filters.checkOut;
         }
-        console.log(url);
         setIsLoading(true);
         const response = await fetch(url);
         const data = await response.json();
