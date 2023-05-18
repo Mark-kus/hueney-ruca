@@ -49,7 +49,7 @@ export default function FilterBarCabanasReal({
             setFilterStateCabanas(
                 auxEstado.filter((e) => e.suspended === false)
             );
-        } else if (estado === "deshabilitado") {
+        } else if (estado === "desabilitado") {
             let auxEstado = [...filterTypeCabanas];
             setFilterStateCabanas(
                 auxEstado.filter((e) => e.suspended === true)
@@ -118,7 +118,7 @@ export default function FilterBarCabanasReal({
                 </select>
             </div>
             <div className="py-4 px-4">
-                <label htmlFor="cabanaEstado">Tipo: </label>
+                <label htmlFor="cabanaEstado">Estado: </label>
                 <select
                     name="cabanaEstado"
                     id="cabanaEstado"
