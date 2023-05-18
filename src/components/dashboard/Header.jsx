@@ -32,7 +32,7 @@ export default function Header({ user, actionOpenSidebar }) {
 			}
 		}
 
-		downloadImage(user.avatar_url)
+		if (user.avatar_url) downloadImage(user.avatar_url)
 	}, []);
 
 	return (
