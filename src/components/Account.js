@@ -7,6 +7,7 @@ import { getProfileId } from "helpers/dbHelpers";
 export default function Account({ session }) {
   const supabase = useSupabaseClient();
   const user = useUser();
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
@@ -67,8 +68,49 @@ export default function Account({ session }) {
     }
   }
 
+  const changeHandler = (e) => {
+    const { name, value } = e.target;
+
+    // Validaciones de inputs
+    let error = null;
+    switch (name) {
+      case "username":
+        if (value.length > 64) {
+          error = "El nombre de usuario debe tener como máximo 64 caracteres";
+        } else {
+          setUsername(value);
+        }
+        break;
+
+      case "full_name":
+        const regex = /^[^\d]*$/;
+        if (!regex.test(value)) {
+          error = "Por favor no ingrese numeros";
+        }
+        if (value.length > 96) {
+          error = "El nombre completo debe tener como máximo 96 caracteres";
+        } else {
+          setFullName(value);
+        }
+        break;
+
+      default:
+        break;
+    }
+    setErrors({
+      ...errors,
+      [name]: error,
+    });
+  };
+
   async function updateProfile({ username, full_name, avatar_url }) {
     try {
+      if (Object.values(errors).some((error) => error !== null)) {
+        // Si hay un error, se evita hacer el submit y tira un alert vintage
+        Swal.fire("Debes correjir los errores", "", "warning");
+        return;
+      }
+
       setLoading(true);
 
       const updates = {
@@ -94,9 +136,10 @@ export default function Account({ session }) {
     <>
       <div className="pt-4 pb-4">
         <div className="border-2 rounded-3xl border-brand-light-green shadow-lg p-6">
-            <h1 className="text-xl font-bold mb-4 text-brand-green">
-              Bienvenido{username ? ` ${username}` : fullName ? ` ${fullName}` : ''}!
-            </h1>
+          <h1 className="text-xl font-bold mb-4 text-brand-green">
+            Bienvenido
+            {username ? ` ${username}` : fullName ? ` ${fullName}` : ""}!
+          </h1>
           <Avatar
             uid={userId}
             url={avatarUrl}
@@ -128,11 +171,13 @@ export default function Account({ session }) {
             </label>
             <input
               id="username"
+              name="username"
               type="text"
               value={username || ""}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={changeHandler}
               className="bg-gray-100 border-2 border-brand-light-green rounded-lg px-3 py-2 w-full text-sm"
             />
+            {errors.username && <div className="error">{errors.username}</div>}
           </div>
           <div className="mb-4">
             <label htmlFor="full_name" className="block font-bold mb-2 text-sm">
@@ -140,11 +185,15 @@ export default function Account({ session }) {
             </label>
             <input
               id="full_name"
+              name="full_name"
               type="text"
               value={fullName || ""}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={changeHandler}
               className="bg-gray-100 border-2 border-brand-light-green rounded-lg px-3 py-2 w-full text-sm"
             />
+            {errors.full_name && (
+              <div className="error">{errors.full_name}</div>
+            )}
           </div>
 
           <div className="mb-3">

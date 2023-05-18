@@ -30,14 +30,14 @@ export default function Dashboard() {
       });
   }, []);
 
-  const deleteHandler = (e) => {
-    swalAction("comentario", e.target.value, setReviews, reviews, "comments");
+  const deleteHandler = (comment) => {
+    swalAction("comentario", comment.id, setReviews, reviews, "comments", comment.suspended);
   };
 
   return (
     <Layout>
       <Header
-        title="Reviews"
+        title="Reseñas"
         breadcrumbs={
           <>
             <li>/</li>
@@ -61,8 +61,9 @@ export default function Dashboard() {
 
               <tbody>
                 {reviews &&
-                  reviews.map((review, i) => (
-                    <tr key={review.id}>
+                  reviews.map((review, i) => {
+                    const bg = review.deleted_at ? 'bg-slate-200' : '';
+                    return <tr key={review.id} className={`${bg}`}>
                       <td
                         className={`border-[#eee] py-5 px-4 ${
                           i < reviews.length - 1 ? "border-b" : ""
@@ -147,13 +148,19 @@ export default function Dashboard() {
                           </Link>
                           <button
                             className="hover:text-primary ri-close-circle-line text-xl leading-none"
-                            onClick={deleteHandler}
-                            value={review.id}
+                            onClick={() => deleteHandler(review)}
                           ></button>
+                          <p className="text-xs">
+                            {review.suspended ? (
+                              <i className="ri-checkbox-blank-circle-fill text-red-700 opacity-50"></i>
+                            ) : (
+                              <i className="ri-checkbox-blank-circle-fill text-green-500 opacity-50"></i>
+                            )}
+                          </p>
                         </div>
                       </td>
                     </tr>
-                  ))}
+                      })}
               </tbody>
             </table>
           </div>

@@ -14,6 +14,9 @@ export default function Actividades() {
         link.href = blobURL;
         link.download = filename;
         link.click();
+        // Borra el objeto URL y el anchor para que no flote en el eter por siempre
+        URL.revokeObjectURL(blobURL);
+        link.remove();
       });
   };
 

@@ -7,7 +7,6 @@ import Swal from "sweetalert2";
 import emailjs from '@emailjs/browser';
 
 export default function ReviewForm({ review }) {
-  console.log(review);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState([]);

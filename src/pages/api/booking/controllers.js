@@ -1,4 +1,4 @@
-import { getProfileId } from "helpers/dbHelpers";
+import { getProfileId, getProfileInfoId } from "helpers/dbHelpers";
 import { supabase } from "../../../utils/supabase";
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -39,10 +39,15 @@ export const postNewBooking = async ({
     children,
 }) => {
     const { userId, error: profileError } = await getProfileId(user_id);
+
     if (profileError) {
         throw profileError;
     }
 
+    const userVerification = await getProfileInfoId(user_id);
+    if (userVerification.suspended === true) {
+        throw new Error("Usuario suspendido");
+    }
     const { data: postBooking, error } = await supabase
         .from("booking")
         .insert([
@@ -99,7 +104,7 @@ export const updateBooking = async (
         if (error) {
             throw error;
         }
-        return 'suspendida permanentemente';
+        return true;
     }
 };
 
@@ -112,7 +117,7 @@ export async function deleteBooking(id) {
     if (error) {
         throw error;
     }
-    return 'eliminada permanentemente';
+    return false;
 }
 
 export async function paymentVerification(bookingId, sessionId) {

@@ -16,12 +16,12 @@ export default function AboutUs() {
 
   return (
     <Layout>
-      <div className="container h-screen mx-auto px-6 2xl:px-0">
+      <div className="container mx-auto px-6 md:px-0">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="order-2 pl-4 lg:col-span-6">
             <h2
               className="text-brand-green text-3xl font-bold 
-													leading-none pt-14 
+													leading-none  
 													md:text-4xl md:leading-none
 													lg:pt-20"
             >

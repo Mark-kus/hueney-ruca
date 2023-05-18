@@ -2,60 +2,79 @@ import { useState, useEffect } from "react";
 import { supabase } from "utils/supabase";
 import Swal from "sweetalert2";
 
-const CabinGallery = ({ type, name }) => {
+const CabinGallery = ({ id }) => {
   const urlBucket =
     "https://kwmjganrkoyleqdillhu.supabase.co/storage/v1/object/public/cabanas_gallery";
-  const newName = name.replace("Cabaña ", "");
+
   const [files, setFiles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [imageDeleted, setImageDeleted] = useState(false);
 
   // console.log(files);
 
   const listFiles = async () => {
-    try {
-      setLoading(true);
-
-      const { data: files, error } = await supabase.storage
-        .from("cabanas_gallery")
-        .list(`${type}/${newName}`);
-
-      if (error) {
-        console.error(error);
-        return [];
+    if (id) {
+      try {
+        const { data: files, error } = await supabase.storage
+          .from("cabanas_gallery")
+          .list(`${id}`);
+  
+        if (error) {
+          console.error(error);
+          return [];
+        }
+  
+        const fileList = files.map((file) => {
+          const fileUrl = `${urlBucket}/${id}/${file.name}`;
+          return {
+            name: file.name,
+            path: fileUrl,
+          };
+        });
+        return fileList;
+      } catch (error) {
+        Swal.fire(errorSwal);
+        console.log(error);
       }
-
-      const fileList = files.map((file) => {
-        const fileUrl = `${urlBucket}/${type}/${newName}/${file.name}`;
-        return {
-          name: file.name,
-          fileUrl: fileUrl,
-        };
-      });
-
-      return fileList;
-    } catch (error) {
-      Swal.fire(errorSwal);
-      console.log(error);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleDelete = async (file) => {
-    const { data, error } = await supabase.storage
-      .from("cabanas_gallery")
-      .remove(`${type}/${newName}/${file.name}`);
+    setImageDeleted(true);
+    Swal.fire({
+      title: "¿Desea eliminar esta imagen para siempre?",
+      text: "Ya no se podrá recuperar una vez confirmado",
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Sí, eliminar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { data, error } = await supabase.storage
+          .from("cabanas_gallery")
+          .remove(`${id}/${file.name}`);
 
-    if (error) {
-      console.error(error);
-      Swal.fire(error.message);
-      return;
-    }
+        const newImages = files.filter(image => image.name !== file.name)
+        const { err } = await supabase.from("rooms").update({ images: newImages }).eq("id", id)
 
-    const newFiles = files.filter((f) => f.name !== file.name);
-    setFiles(newFiles);
+        if (error || err) {
+          console.error(error || err);
+          Swal.fire({
+            title: "Error!",
+            text: error.message || err.message,
+            icon: "warning",
+          });
+          return;
+        }
 
-    Swal.fire("Se elimino la imagen");
+        const newFiles = files.filter((f) => f.name !== file.name);
+        setFiles(newImages);
+
+        Swal.fire({
+          title: "Se eliminó la imagen correctamente",
+          icon: "success",
+        });
+      }
+    });
   };
 
   useEffect(() => {
@@ -63,81 +82,38 @@ const CabinGallery = ({ type, name }) => {
       const fileList = await listFiles();
       setFiles(fileList);
     };
-    getFiles();
+    const interval = setInterval(() => {
+      getFiles();
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
-
-  const handleSaveChanges = async () => {
-    try {
-      setLoading(true);
-
-      const { data: existingData, error: existingError } = await supabase
-        .from("images")
-        .select()
-        .eq("alt", name);
-
-      if (existingError) {
-        throw new Error(existingError.message);
-      }
-
-      let responseData = {};
-      if (existingData && existingData.length > 0) {
-        responseData = existingData[0];
-      }
-
-      const dataJSON = {
-        alt: name,
-        url: files,
-      };
-
-      const { data, error } = await supabase
-        .from("images")
-        .upsert({ ...responseData, ...dataJSON });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      Swal.fire("Imágenes guardadas exitosamente");
-    } catch (error) {
-      console.error(error);
-      Swal.fire(error.message);
-    }finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-2xl font-bold mb-4">Imagenes de la cabaña {name}:</h1>
-      {files.length > 1 ? (
+      {id && files.length > 1 ? (
         <>
           <div className="flex flex-wrap">
             {files.map((file, index) => (
-              <div key={index} className="w-1/4 p-2">
+              <div key={index} className="w-1/4 md:w-1/2 p-2">
                 <img
-                  src={`${urlBucket}/${type}/${newName}/${file.name}`}
+                  src={`${urlBucket}/${id}/${file.name}`}
                   alt={file.name}
-                  className="max-w-full rounded-md shadow-sm"
+                  className="max-w-full rounded-t-md shadow-sm w-full h-14 object-cover"
                   width="100px"
                   height="100px"
                 />
-                <p>{file.name}</p>
                 <button
                   onClick={() => handleDelete(file)}
-                  className="px-1 py-0.5 bg-red-500 text-white rounded-md hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  className="w-full px-1 py-0.5 bg-red-500 text-white rounded-b-md hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                 >
                   Eliminar
                 </button>
               </div>
             ))}
           </div>
-          <button
-            className=" px-1 py-0.5 bg-blue-400 text-white rounded-md"
-            onClick={handleSaveChanges}
-            disabled={loading}
-          >
-            {loading ? "Guardando..." : "Guardar cambios"}
-          </button>
         </>
       ) : (
         <p>No hay imágenes en este bucket</p>

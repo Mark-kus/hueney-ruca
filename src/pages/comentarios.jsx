@@ -38,7 +38,7 @@ export default function Comentario() {
     const fetchComments = async () => {
       try {
         const response = await axios.get("/api/comments");
-        setComments(response.data);
+        setComments(response.data.filter(review => review.approved && !review.suspended && review.deleted_at === null));
       } catch (error) {
         console.error(error);
       }
@@ -50,7 +50,7 @@ export default function Comentario() {
   return (
     <LayoutMain>
       <section className="h-screen px-4">
-        <div className="max-w-6xl mx-auto py-8">
+        <div className="max-w-6xl mx-auto md:py-8">
           <h2 className="text-brand-green text-4xl font-bold mb-6 mt-8">
             Nuestros huespedes!
           </h2>

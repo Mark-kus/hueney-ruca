@@ -13,9 +13,9 @@ import swalError from './swalError.js';
  * @param {String}   route           Ruta de la api (DELETE/PUT /api/${route}/${id}).
  */
 
-export default async function swalAction(instancia, id, setter, data, route) {
+export default async function swalAction(instancia, id, setter, data, route, suspended) {
     // Para saber si la instancia es el o la
-    let resultado;
+    const resultado = { result: null, realizado: false };
     const articulo =
         instancia.slice(-1) === 'a'
             ? 'la'
@@ -28,8 +28,8 @@ export default async function swalAction(instancia, id, setter, data, route) {
         allowEnterKey: false,
         showCancelButton: true,
         showDenyButton: true,
-        confirmButtonText: 'Suspender',
-        confirmButtonAriaLabel: 'Suspender',
+        confirmButtonText: suspended ? 'Habilitar' : 'Suspender',
+        confirmButtonAriaLabel: suspended ? 'Habilitar' : 'Suspender',
         denyButtonText: 'Eliminar',
         denyButtonAriaLabel: 'Eliminar',
         cancelButtonText: 'Ninguna',
@@ -41,31 +41,37 @@ export default async function swalAction(instancia, id, setter, data, route) {
                 return await axios.put(`/api/${route}/${id}?suspend=true`);
             } catch (error) {
                 swalError()
-                return false;
+                return 'error';
             }
         },
         preDeny: async () => {
             // Borrado logico de instancia
             try {
-                return await axios.delete(`/api/${route}/${id}`)
+                return await axios.delete(`/api/${route}/${id}`);
             } catch (error) {
                 swalError()
-                return false;
+                return 'error';
             }
         }
     })
         // Si no fue cancelado, actua (pre👆) y responde con otro swal
         .then((result) => {
-            if (!result.isDismissed && result.value) {
+            if (!result.isDismissed && result.value !== 'error') {
                 Swal.fire(
                     'Listo!',
-                    `Se ${result.isConfirmed ? 'suspendió' : 'borró'} ${articulo} ${instancia}.`,
+                    `Se ${result.isConfirmed ? suspended ? 'habilitó' : 'suspendió' : 'borró'} ${articulo} ${instancia}.`,
                     'success',
                 )
-                // Borra esa instancia de la lista en index
-                setter(data.filter((elem) => elem.id !== id))
-                resultado = result.value.data;
+                const finded = data.find(data => data.id === id);
+                result.isConfirmed ? finded.suspended = !finded.suspended :
+                finded.deleted_at = Date.now();
+                setter([
+                    ...data.filter(dato => dato.id !== finded.id),
+                    finded
+                ]);
+                resultado.result = result.value.data;
+                resultado.realizado = true;
             }
         })
-        return resultado
+    return resultado
 }

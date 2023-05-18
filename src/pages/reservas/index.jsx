@@ -4,13 +4,19 @@ import Layout from "layouts/Layout";
 import Link from "next/link";
 import Login from "pages/login";
 import Opinion from "components/Opinion.jsx";
+import emailjs from '@emailjs/browser';
 import { useEffect, useState } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
+import { getProfileInfoId } from "helpers/dbHelpers";
+import Swal from "sweetalert2";
 
 export default function Reservas() {
+  const [user, setUser] = useState({});
   const [bookings, setBookings] = useState([]);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
   const [toggle, setToggle] = useState(true);
   const session = useSession();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getUserBookings = async () => {
@@ -18,21 +24,57 @@ export default function Reservas() {
         return;
       }
       const response = await axios(`/api/profile/${session.user.id}/bookings`);
-      setBookings(response.data);
+      setIsLoading(true);
+      setBookings(response.data.filter(booking => booking.deleted_at === null));
+      setIsLoading(false);
+      setUser(await getProfileInfoId(session.user.id))
     };
     getUserBookings();
   }, [session]);
 
+  const sendEmail = async () => {
+    setButtonDisabled(true);
+    const username = user.username || user.full_name || user.email.slice(0, user.email.indexOf('@'));
+    // envío de email, message es lo que va dentro de él
+    emailjs.send(
+      process.env.NEXT_PUBLIC_EMAIL_SERVICE_ID,
+      process.env.NEXT_PUBLIC_EMAIL_TEMPLATE_GENERIC,
+      {
+        user_name: username,
+        user_email: user.email,
+        message: `Hola ${username}, gracias por elegirnos para unas vacaciones! 
+            Ya casi está todo listo, solo faltas vos! Junto a este mail
+            te compartimos la información de la reserva que hiciste. Te esperamos!`,
+      },
+      process.env.NEXT_PUBLIC_EMAIL_PUBLIC_KEY
+    )
+      .then(response => {
+        Swal.fire('Ya te enviamos un email con la información pedida', '', 'success')
+        setButtonDisabled(false);
+      })
+      .catch(error => {
+        Swal.fire('Hubo un error al enviarte los datos', 'Intenta de nuevo más tarde', 'error')
+        setButtonDisabled(false);
+      });
+  }
+
   const handleDownload = (e) => {
     e.preventDefault();
-    // Descarga de comprobante
+    sendEmail();
   };
+
   return (
     <>
       {session ? (
         <Layout>
-          {toggle ? (
-            <article className="h-screen">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-screen">
+              <div className="animate-spin rounded-full h-32 w-32 border-t-6 border-b-6 border-brand-olive"></div>
+            </div>
+          ) : (
+            <>
+              {toggle ? (
+                <article className="min-h-screen mb-6">
               <h1
                 className="text-brand-green text-3xl font-bold 
 			    leading-none text-center pt-14 pb-8 md:text-4xl md:leading-none"
@@ -54,9 +96,8 @@ export default function Reservas() {
                       !booking.suspended,
                     ].every(Boolean);
                     return (
-                      <div className="p-1">
+                      <div key={i} className="p-1">
                         <li
-                          key={i}
                           className={`${cls} p-4 flex justify-between items-center border rounded-xl`}
                         >
                           <h2 className="text-brand-light-green font-semibold flex flex-col lg:flex-row">
@@ -76,16 +117,15 @@ export default function Reservas() {
                             Suspendido: {booking.suspended ? "✅" : "❌"}
                           </p>
                           <div className="flex items-center">
-                            <a
+                            <button
+                              disabled={buttonDisabled}
                               onClick={handleDownload}
                               className="hover:text-primary ri-file-text-line text-xl leading-none"
-                              href="/"
-                            ></a>
+                            ></button>
                             <Link
                               href={`/cabanas/${booking.rooms.id}`}
-                              className={`btn-yellow ${
-                                hasPassed ? "mx-2" : "ml-2"
-                              }`}
+                              className={`btn-yellow ${hasPassed ? "mx-2" : "ml-2"
+                                }`}
                             >
                               Ver cabaña
                             </Link>
@@ -112,13 +152,15 @@ export default function Reservas() {
                 </h1>
               )}
             </article>
-          ) : (
-            <Opinion setToggle={setToggle} />
-          )}
-        </Layout>
-      ) : (
-        <Login />
-      )}
-    </>
+            ) : (
+              <Opinion setToggle={setToggle} />
+            )}
+          </>
+        )}
+      </Layout>
+    ) : (
+      <Login />
+    )}
+    </> 
   );
 }
