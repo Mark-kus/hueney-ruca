@@ -13,7 +13,7 @@ export default function Room({ room }) {
   const handleValueChange = (newValue) => {
     setValue(newValue);
   };
-
+  
   return (
     <Layout>
       {room.images ? (
@@ -108,13 +108,13 @@ export default function Room({ room }) {
             </div>
 
             <div className="self-center mt-6">
-             {room.available || room.suspended ? 
-             <div className="btn-yellow">
-                <span className="px-4 py-1.5">No disponible</span>
-             </div>
-             : <Link className="btn-yellow" href={`/checkout/${room.id}`}>
-                <span className="px-4 py-1.5">Resérvalo ahora</span>
-              </Link>}
+              {room.available && !room.suspended ?
+                <Link className="btn-yellow" href={`/checkout/${room.id}`}>
+                  <span className="px-4 py-1.5">Resérvalo ahora</span>
+                </Link>
+                : <div className="btn-yellow">
+                  <span className="px-4 py-1.5">No disponible</span>
+                </div>}
             </div>
           </div>
         </div>
