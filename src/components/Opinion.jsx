@@ -79,7 +79,7 @@ export default function RatingForm({ setToggle }) {
       <div className="text-center">
         <h1 className="text-3xl font-bold text-brand-green">
           <button onClick={() => setToggle(true)}>
-            <img src="Back.svg" alt="volver" className="w-5 mr-5" />
+            <img src="arrowBack.svg" alt="volver" className="w-5 mr-5" />
           </button>
           ¡Cuéntanos cómo te pareció tu estadía!
         </h1>
