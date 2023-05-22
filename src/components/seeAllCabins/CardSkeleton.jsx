@@ -1,10 +1,10 @@
 export default function CardSkeleton() {
   return (
-    <div className="border rounded-2xl overflow-hidden shadow-lg flex flex-col animate-pulse md:flex-row m-1">
+    <div className="border-2 border-slate-200 rounded-2xl overflow-hidden shadow-lg flex flex-col animate-pulse md:flex-row m-1">
       <div className="relative w-80 h-56 flex-shrink-0 p-4">
         <div className="bg-brand-cream dark:bg-brand-brown animate-pulse rounded-2xl w-full h-full flex items-center justify-center">
           <svg
-            className="w-12 h-12 text-brand-cream dark:text-brand-olive"
+            className="w-12 h-12 text-brand-brown dark:text-brand-olive"
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
             fill="currentColor"
