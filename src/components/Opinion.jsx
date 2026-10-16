@@ -3,7 +3,7 @@ import Layout from "layouts/Layout";
 import Swal from "sweetalert2";
 import arrowBack from "../../public/arrowBack.svg";
 import { useEffect, useState } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession } from "helpers/authProvider";
 import { getProfileId } from "helpers/dbHelpers.js";
 
 export default function RatingForm({ setToggle }) {

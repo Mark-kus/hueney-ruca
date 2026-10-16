@@ -7,7 +7,7 @@ import swalAction from "components/dashboard/swalAction";
 import dayjs from "dayjs";
 import emailjs from "@emailjs/browser";
 import { useEffect, useState } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession } from "helpers/authProvider";
 import Swal from "sweetalert2";
 import FilterBarUsers from "components/FilterBarUsers";
 import Pagination from "components/Pagination";

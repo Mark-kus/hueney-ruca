@@ -1,4 +1,4 @@
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession } from "helpers/authProvider";
 import CheckOutForm from "components/CheckOutForm";
 import LayoutMain from "layouts/Layout";
 import Login from "pages/login";

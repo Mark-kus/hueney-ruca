@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession } from "helpers/authProvider";
 import { useRouter } from "next/router";
 import { getProfileInfoId } from "helpers/dbHelpers";
 import Preload from "components/dashboard/PreloadSmall";

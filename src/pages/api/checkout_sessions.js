@@ -1,9 +1,37 @@
+import { requireSession } from "helpers/apiGuard";
+
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
+    // La sesión de checkout la crea siempre un usuario logueado
+    const auth = await requireSession(req, res);
+    if (!auth) return;
+
     if (req.method === "POST") {
         const { price_id, night, roomId, booking_id } = req.body;
         try {
+            // El price_id debe pertenecer a la cabaña: evita pagar un precio arbitrario
+            const { data: room, error } = await auth.supabase
+                .from("rooms")
+                .select("id, stripe_product_id, suspended, deleted_at")
+                .eq("id", roomId)
+                .maybeSingle();
+
+            if (error) throw error;
+            if (!room || room.suspended || room.deleted_at) {
+                return res.status(400).json({ error: "Cabaña no disponible" });
+            }
+
+            const product = await stripe.products.retrieve(room.stripe_product_id);
+            const defaultPriceId =
+                typeof product.default_price === "string"
+                    ? product.default_price
+                    : product.default_price?.id;
+
+            if (defaultPriceId !== price_id) {
+                return res.status(400).json({ error: "Precio inválido" });
+            }
+
             // Create Checkout Sessions from body params.
             const session = await stripe.checkout.sessions.create({
                 line_items: [
@@ -13,11 +41,8 @@ export default async function handler(req, res) {
                         quantity: night,
                     },
                 ],
-                // payment_method_types: ["card"],
                 mode: "payment",
                 success_url: `${req.headers.origin}/thank-you?booking_id=${booking_id}&session_id={CHECKOUT_SESSION_ID}`,
-                // success_url: `${req.headers.origin}/thank-you?success=true&session_id={CHECKOUT_SESION_ID}`,
-
                 cancel_url: `${req.headers.origin}/checkout/${roomId}`,
             });
             res.json(session);
@@ -26,7 +51,6 @@ export default async function handler(req, res) {
         }
     } else if (req.method === "GET") {
         try {
-            //console.log("query: ", req.query);
             const session = await stripe.checkout.sessions.retrieve(
                 req.query.session_id
             );

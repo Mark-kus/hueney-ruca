@@ -1,21 +1,25 @@
-import * as Methods from "../methods"
-import * as Handlers from "./handlers"
+import * as Methods from "../methods";
+import * as Handlers from "./handlers";
+import { requireAdmin, requireSession } from "helpers/apiGuard";
 
-export default async function handlerBooking (req, res){
-    const method = req.method
-    switch(method){
+export default async function handlerBooking(req, res) {
+    const method = req.method;
+    switch (method) {
         case Methods.GET:
-            return await Handlers.handlerGet(req, res)
+            if (!(await requireAdmin(req, res))) return;
+            return await Handlers.handlerGet(req, res);
         case Methods.POST:
-            return await Handlers.handlerPost(req, res)
+            if (!(await requireSession(req, res))) return;
+            return await Handlers.handlerPost(req, res);
         case Methods.PUT:
-            return await Handlers.handlerPut(req, res)
+            if (!(await requireAdmin(req, res))) return;
+            return await Handlers.handlerPut(req, res);
         case Methods.DELETE:
-            return await Handlers.handlerDelete(req, res)
+            if (!(await requireAdmin(req, res))) return;
+            return await Handlers.handlerDelete(req, res);
         default:
             res.status(400).json({
-                message:"400 Bad Request : invalid method",
-            })
-    
+                message: "400 Bad Request : invalid method",
+            });
     }
 }

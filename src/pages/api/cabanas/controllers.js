@@ -59,11 +59,11 @@ export const postRoom = async (form_data, images) => {
     name: form_data.name,
     description: form_data.description,
     metadata: {
-      type: form_data.type,
-      rooms: form_data.rooms,
-      capacity: form_data.capacity,
-      beds: form_data.beds,
-      price_metadata: form_data.price,
+      type: String(form_data.type),
+      rooms: String(form_data.rooms),
+      capacity: String(form_data.capacity),
+      beds: String(form_data.beds),
+      price_metadata: String(form_data.price),
     },
   });
   //Creacion del precio
@@ -116,10 +116,27 @@ export const upRoom = async (id, form_data, suspend) => {
       unit_amount: parseInt(form_data.price) * 100,
       currency: "ars",
     });
-    const updatePrice = await stripe.products.update(upRoom.stripe_product_id, {
-      default_price: newPrice.id,
-    });
-    const oldPrinceUpdate = await stripe.prices.update(oldPriceId, {
+    const productUpdates = { default_price: newPrice.id };
+    if (productToUpdate.name !== form_data.name) {
+      productUpdates.name = form_data.name;
+    }
+    if ((productToUpdate.description || "") !== (form_data.description || "")) {
+      productUpdates.description = form_data.description || "";
+    }
+    const metadata = {
+      type: String(form_data.type),
+      rooms: String(form_data.rooms),
+      capacity: String(form_data.capacity),
+      beds: String(form_data.beds),
+      price_metadata: String(form_data.price),
+    };
+    if (Object.entries(metadata).some(([k, v]) => productToUpdate.metadata?.[k] !== v)) {
+      productUpdates.metadata = metadata;
+    }
+    // El nombre del product debe ser igual al de la room: el checkout
+    // matchingea por name (ver src/pages/checkout/[id].jsx)
+    await stripe.products.update(upRoom.stripe_product_id, productUpdates);
+    await stripe.prices.update(oldPriceId, {
       active: false,
     });
 

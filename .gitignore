@@ -31,4 +31,7 @@ yarn-error.log*
 
 # vercel
 .vercel
-package-lock.json
+
+# opencode (configuración local de agentes/skills)
+.agents/
+skills-lock.json

@@ -5,7 +5,7 @@ import emailjs from "@emailjs/browser";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { diffDays } from "helpers/dateProcessing";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession } from "helpers/authProvider";
 
 export default function ThankYou() {
     const mock = {

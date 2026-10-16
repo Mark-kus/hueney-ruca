@@ -4,7 +4,7 @@ export default function Actividades() {
 
   const handleDownload = (e) => {
     e.preventDefault()
-    const url = 'https://kwmjganrkoyleqdillhu.supabase.co/storage/v1/object/public/hueney_ruca/catalogo_turistico/Catalogo_Turistico_Sierras-de-la-Venatana.pdf';
+    const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/hueney_ruca/catalogo_turistico/Catalogo_Turistico_Sierras-de-la-Venatana.pdf`;
     const filename = 'Catalogo_Turistico_Sierras-de-la-Venatana.pdf';
     fetch(url)
       .then(response => response.blob())
@@ -31,7 +31,7 @@ export default function Actividades() {
         <div 
 					className="text-brand-green text-center 
 												leading-tight max-w-4xl mx-auto">
-					¿Estás listo para explorar nuevos lugares, conocer gente increíble y crear recuerdos inolvidables? Entonces, ¡tenemos la escapada perfecta para ti!. Descargá el catálogo turistico de Sierra de la Ventana desde <a className='underline' href='/' onClick={handleDownload}>aquí</a>.
+					¿Estás listo para explorar nuevos lugares, conocer gente increíble y crear recuerdos inolvidables? Entonces, ¡tenemos la escapada perfecta para ti!. Descargá el catálogo turistico de Sierra de la Ventana desde <button type="button" className='underline bg-transparent border-0 p-0 cursor-pointer' onClick={handleDownload}>aquí</button>.
 				</div>
 
           <div 

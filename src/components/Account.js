@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useUser, useSupabaseClient } from "helpers/authProvider";
 import Avatar from "./Avatar";
 import Swal from "sweetalert2";
 import { getProfileId } from "helpers/dbHelpers";
@@ -118,7 +118,6 @@ export default function Account({ session }) {
         username: username,
         full_name,
         avatar_url,
-        updated_at: new Date().toISOString(),
       };
 
       let { error } = await supabase.from("profiles").upsert(updates);
