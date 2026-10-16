@@ -56,9 +56,9 @@ export const postNewBooking = async ({
                 checkout,
                 user_id: userId,
                 room_id,
-                payments,
-                adults,
-                children,
+                payments: payments ?? false,
+                adults: adults ?? 1,
+                children: children ?? 0,
             },
         ])
         .select();

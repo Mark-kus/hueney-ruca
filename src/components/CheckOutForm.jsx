@@ -62,8 +62,8 @@ export default function CheckOutForm({
 
         const data = await response.json();
 
-        if (data.error === "Usuario suspendido") {
-            setError("Usuario suspendido");
+        if (data.error || !data[0]) {
+            setError(data.error || "No se pudo crear la reserva");
             setShowAlert(true);
             setTimeout(() => {
                 setShowAlert(false);
