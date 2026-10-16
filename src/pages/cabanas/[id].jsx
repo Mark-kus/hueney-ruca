@@ -118,7 +118,7 @@ export default function Room({ room }) {
                         </div>
 
                         <div className="self-center mt-6">
-                            {room.available && !room.suspended ? (
+                            {!room.suspended && !room.deleted_at ? (
                                 <Link
                                     className="btn-yellow"
                                     href={`/checkout/${room.id}`}

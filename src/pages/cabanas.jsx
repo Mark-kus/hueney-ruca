@@ -21,10 +21,12 @@ export default function Cabins({ plans }) {
         return map;
       }, {});
 
-      const cabinsWithPrices = response.data.map((cabin, index) => ({
-        ...cabin,
-        price: pricesMap[cabin.name] || null,
-      }));
+      const cabinsWithPrices = response.data
+        .filter((room) => room.deleted_at === null)
+        .map((cabin) => ({
+          ...cabin,
+          price: pricesMap[cabin.name] || null,
+        }));
 
       setCabins(cabinsWithPrices);
       setLoading(false);
@@ -33,21 +35,12 @@ export default function Cabins({ plans }) {
     getCabins();
   }, []);
 
-  useEffect(() => {
-    axios
-      .get("/api/cabanas")
-      .then((response) => {
-        setCabins(response.data.filter((room) => room.deleted_at === null));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
   const settings = {
     dots: true,
     slidesToShow: 3,
-    infinite: true,
+    // react-slick clona slides con infinite:true si hay menos cabañas
+    // que slidesToShow, y eso duplicaba la cabaña repetida en el listado.
+    infinite: cabins.length > 3,
     arrows: false,
     centerMode: true,
     centerPadding: "0",

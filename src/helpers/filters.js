@@ -1,16 +1,11 @@
 import { checkOverlappingPeriods } from "./dateProcessing";
-import { parseCapacityToArray } from "./parsers";
 
-//Filtra de todas las cabanas aquellas que incluyan la capacidad requerida
+//Filtra de todas las cabanas aquellas que incluyan la capacidad requerida.
+//capacity es un numero entero en la DB, así que se compara como maximo.
 export function filterRoomsByCapacity(rooms, requestCapacity) {
-    const results = [];
-    for (let i = 0; i < rooms.length; i++) {
-        const roomCapacity = parseCapacityToArray(rooms[i].capacity);
-        if (roomCapacity.includes(requestCapacity)) {
-            results.push(rooms[i]);
-        }
-    }
-    return results;
+    const wanted = Number(requestCapacity);
+    if (!wanted || wanted <= 0) return rooms;
+    return rooms.filter((room) => Number(room.capacity) >= wanted);
 }
 
 //Para una habitacion recorre todas las reservas y consulta que el periodo entre

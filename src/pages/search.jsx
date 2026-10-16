@@ -26,17 +26,15 @@ export default function Search() {
                 let aux = parseInt(guests);
 
                 let url = "api/cabanas?capacity=" + aux;
-                if (checkin !== "" && checkout !== "") {
+                if (checkin && checkout) {
                     url = url + "&checkin=" + checkin + "&checkout=" + checkout;
                 }
 
                 setFilters({
                     ...filters,
                     capacity: aux,
-                    checkIn:
-                        checkin === "" ? null : new Date(checkin).addHours(4),
-                    checkOut:
-                        checkout === "" ? null : new Date(checkout).addHours(4),
+                    checkIn: checkin ? new Date(checkin).addHours(4) : null,
+                    checkOut: checkout ? new Date(checkout).addHours(4) : null,
                 });
 
                 const response = await fetch(url);
@@ -64,7 +62,7 @@ export default function Search() {
         if (filters.capacity !== 0) {
             url = url + "?capacity=" + filters.capacity;
         }
-        if ((filters.checkIn !== null) & (filters.checkOut !== null)) {
+        if (filters.checkIn !== null && filters.checkOut !== null) {
             url =
                 url +
                 "&checkin=" +

@@ -17,6 +17,8 @@ export default class NavSliders extends Component {
 		slidesToShow: 1,
 		slidesToScroll: 1,
 		accessibility: true,
+		// Sin esto react-slick clona la primer imagen y aparece repetida
+		infinite: false,
 		// adaptiveHeight: true // Se adapta bien a la primera imagen, el resto las deja, las largas las corta
 	};
 
@@ -26,6 +28,7 @@ export default class NavSliders extends Component {
 		swipeToSlide: true,
 		focusOnSelect: true,
 		accessibility: true,
+		infinite: false,
 	};
 
 	componentDidMount() {
