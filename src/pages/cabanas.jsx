@@ -172,42 +172,47 @@ export default function Cabins({ plans }) {
   );
 }
 
-export const getStaticProps = async () => {
-  const stripe = initStripe(process.env.STRIPE_SECRET_KEY);
+export const getServerSideProps = async () => {
+  let plans = [];
+  try {
+    const stripe = initStripe(process.env.STRIPE_SECRET_KEY);
 
-  const limit = 11;
-  let prices = [];
-  let hasMorePrices = true;
-  let startingAfter;
+    const limit = 11;
+    let rawPrices = [];
+    let hasMorePrices = true;
+    let startingAfter;
 
-  while (hasMorePrices) {
-    const options = startingAfter
-      ? { limit, starting_after: startingAfter }
-      : { limit };
-    const { data: newPrices, has_more: morePrices } = await stripe.prices.list(
-      options
+    while (hasMorePrices) {
+      const options = startingAfter
+        ? { limit, starting_after: startingAfter }
+        : { limit };
+      const { data: newPrices, has_more: morePrices } = await stripe.prices.list(
+        options
+      );
+      rawPrices = rawPrices.concat(newPrices);
+      hasMorePrices = morePrices;
+      startingAfter = newPrices[newPrices.length - 1]?.id;
+    }
+
+    const withProducts = await Promise.all(
+      rawPrices.map(async (price) => {
+        const product = await stripe.products.retrieve(price.product);
+        return {
+          id: price.id,
+          name: product.name,
+          price: price.unit_amount,
+        };
+      })
     );
-    prices = prices.concat(newPrices);
-    hasMorePrices = morePrices;
-    startingAfter = newPrices[newPrices.length - 1]?.id;
+
+    plans = withProducts.sort((a, b) => a.price - b.price);
+  } catch (error) {
+    console.error("No se pudieron cargar los precios de Stripe:", error.message);
   }
-
-  const plans = await Promise.all(
-    prices.map(async (price) => {
-      const product = await stripe.products.retrieve(price.product);
-      return {
-        id: price.id,
-        name: product.name,
-        price: price.unit_amount,
-      };
-    })
-  );
-
-  const sortedPlans = plans.sort((a, b) => a.price - b.price);
 
   return {
     props: {
-      plans: sortedPlans,
+      plans,
     },
   };
 };

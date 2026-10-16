@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default function (props) {
+export default function BtnSubmit(props) {
 	return (
 		<div className="flex justify-end gap-4.5">
 

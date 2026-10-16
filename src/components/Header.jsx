@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession } from "helpers/authProvider";
 import { getProfileInfoId } from "helpers/dbHelpers";
 import { useRouter } from "next/router";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient } from "helpers/authProvider";
 import Swal from "sweetalert2";
 
 export default function Header(props) {

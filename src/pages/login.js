@@ -1,6 +1,6 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSession, useSupabaseClient } from "helpers/authProvider";
 import Account from "../components/Account";
 import Header from "components/Header";
 import Footer from "components/Footer";

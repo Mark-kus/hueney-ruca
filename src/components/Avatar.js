@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient } from "helpers/authProvider";
 import Swal from "sweetalert2";
 
 export default function Avatar({ uid, url, size, onUpload }) {

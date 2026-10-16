@@ -6,7 +6,7 @@ import Login from "pages/login";
 import Opinion from "components/Opinion.jsx";
 import emailjs from '@emailjs/browser';
 import { useEffect, useState } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession } from "helpers/authProvider";
 import { getProfileInfoId } from "helpers/dbHelpers";
 import Swal from "sweetalert2";
 

@@ -1,4 +1,4 @@
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession } from "helpers/authProvider";
 import Datepicker from "./form/Datepicker";
 import GuestsSelector from "./form/GuestsSelector";
 import { useEffect, useState } from "react";

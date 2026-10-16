@@ -3,8 +3,7 @@ import { supabase } from "utils/supabase";
 import Swal from "sweetalert2";
 
 const CabinGallery = ({ id }) => {
-  const urlBucket =
-    "https://kwmjganrkoyleqdillhu.supabase.co/storage/v1/object/public/cabanas_gallery";
+  const urlBucket = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/cabanas_gallery`;
 
   const [files, setFiles] = useState([]);
   const [imageDeleted, setImageDeleted] = useState(false);
